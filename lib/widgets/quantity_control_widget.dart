@@ -25,18 +25,16 @@ class QuantityControlState extends ConsumerState<QuantityControl> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         IconButton(
-          icon: const Icon(Icons.add),
+          icon: const Icon(Icons.remove),
           onPressed: () {
-            ref.watch(cartProvider.notifier).addToCart(productInCart);
-            setState(() {});
+            ref.watch(cartProvider.notifier).decrementQuantity(productInCart);
           },
         ),
         Text('${productInCart.quantity}'),
         IconButton(
-          icon: const Icon(Icons.remove),
+          icon: const Icon(Icons.add),
           onPressed: () {
-            ref.watch(cartProvider.notifier).decrementQuantity(productInCart);
-            setState(() {});
+            ref.watch(cartProvider.notifier).addToCart(productInCart);
           },
         ),
       ],

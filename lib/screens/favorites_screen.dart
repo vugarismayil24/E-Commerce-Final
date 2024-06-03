@@ -11,11 +11,11 @@ class FavoritesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favorites'),
+        title: const Text('Favoriler'),
       ),
       body: favoriteItems.isEmpty
           ? const Center(
-              child: Text('No favorite items'),
+              child: Text('Favori öğe yok'),
             )
           : ListView.builder(
               itemCount: favoriteItems.length,
@@ -29,11 +29,13 @@ class FavoritesScreen extends ConsumerWidget {
                     height: 50,
                   ),
                   title: Text(product.title),
-                  subtitle: Text('${product.price} DT'),
+                  subtitle: Text('${product.price} AZN'),
                   trailing: IconButton(
                     icon: const Icon(Icons.remove_circle),
                     onPressed: () {
-                      ref.read(favoritesProvider.notifier).removeFromFavorites(product);
+                      ref
+                          .read(favoritesProvider.notifier)
+                          .removeFromFavorites(product);
                     },
                   ),
                 );

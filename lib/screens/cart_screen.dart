@@ -93,7 +93,7 @@ class CartScreen extends ConsumerWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            product.title,
+                                            product.title.substring(0,18),
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -118,7 +118,7 @@ class CartScreen extends ConsumerWidget {
                                     ),
                                     QuantityControl(product: product),
                                     IconButton(
-                                      icon: const Icon(Icons.remove_shopping_cart),
+                                      icon: const Icon(Icons.delete),
                                       onPressed: () {
                                         ref.read(cartProvider.notifier).removeFromCart(product);
                                       },

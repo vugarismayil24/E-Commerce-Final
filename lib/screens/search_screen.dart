@@ -20,7 +20,9 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
     final productsAsyncValue = ref.watch(productsProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xffFFFFFF),
       appBar: AppBar(
+        backgroundColor: const Color(0xffFFFFFF),
         title: SizedBox(
           height: 40,
           child: TextField(
@@ -30,6 +32,7 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(50)),
               ),
+              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             ),
             onChanged: (value) {
               setState(() {

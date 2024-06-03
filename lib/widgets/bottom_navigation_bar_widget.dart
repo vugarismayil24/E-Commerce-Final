@@ -16,28 +16,37 @@ class BottomNavigationBarWidget extends ConsumerStatefulWidget {
 class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWidget> {
   int _selectedIndex = 0;
 
-  static  final List<Widget> _widgetOptions = <Widget>[
-    const ProductListScreen(),
-    const SearchScreen(),
-    const FavoritesScreen(),
-    const CartScreen(),
-    const ProfileScreen(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  Widget _getSelectedWidget() {
+    switch (_selectedIndex) {
+      case 0:
+        return const ProductListScreen();
+      case 1:
+        return const SearchScreen();
+      case 2:
+        return const FavoritesScreen();
+      case 3:
+        return const CartScreen();
+      case 4:
+        return const ProfileScreen();
+      default:
+        return const ProductListScreen();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Temu'),
+        title: const Text('MCOM'),
         centerTitle: true,
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: _getSelectedWidget(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

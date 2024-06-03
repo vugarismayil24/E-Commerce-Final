@@ -11,7 +11,11 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
   }
 
   void removeFromFavorites(Product product) {
-    state = state.where((item) => item != product).toList();
+    state = state.where((p) => p != product).toList();
+  }
+
+  bool isFavorite(Product product) {
+    return state.contains(product);
   }
 }
 

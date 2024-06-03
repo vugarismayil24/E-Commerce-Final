@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'widgets/bottom_navigation_bar_widget.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -11,9 +11,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  const MaterialApp(
+    return   const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: BottomNavigationBarWidget(),
+      home: SplashScreen(),
     );
   }
 }
