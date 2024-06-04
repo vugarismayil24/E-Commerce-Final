@@ -4,14 +4,22 @@ import '../models/product.dart';
 class CartNotifier extends StateNotifier<List<Product>> {
   CartNotifier() : super([]);
 
-  void addToCart(Product product) {
-    if (state.any((item) => item.title == product.title)) {
+  void addToCart(Product product, {int quantity = 1}) {
+    final existingProduct = state.firstWhere(
+      (item) => item.title == product.title,
+      orElse: () => Product(title: '', imageUrl: '', price: 0, quantity: 0, description: '', category: ''),
+    );
+
+    if (existingProduct.title.isNotEmpty) {
       state = [
         for (final item in state)
-          if (item.title == product.title) item.copyWith(quantity: item.quantity + 1) else item
+          if (item.title == product.title)
+            item.copyWith(quantity: item.quantity + quantity)
+          else
+            item
       ];
     } else {
-      state = [...state, product.copyWith(quantity: 1)];
+      state = [...state, product.copyWith(quantity: quantity)];
     }
   }
 
@@ -23,22 +31,18 @@ class CartNotifier extends StateNotifier<List<Product>> {
     state = [];
   }
 
-  void incrementQuantity(Product product) {
-    state = [
-      for (final item in state)
-        if (item.title == product.title) item.copyWith(quantity: item.quantity + 1) else item
-    ];
+  void updateQuantity(Product product, int change) {
+    state = state.map((item) {
+      if (item.title == product.title) {
+        final newQuantity = item.quantity + change;
+        return item.copyWith(quantity: newQuantity > 0 ? newQuantity : 1);
+      }
+      return item;
+    }).toList();
   }
 
-  void decrementQuantity(Product product) {
-    state = [
-      for (final item in state)
-        if (item.title == product.title && item.quantity > 1)
-          item.copyWith(quantity: item.quantity - 1)
-        else
-          item
-    ];
-  }
+  void incrementQuantity(Product product) => updateQuantity(product, 1);
+  void decrementQuantity(Product product) => updateQuantity(product, -1);
 }
 
 final cartProvider = StateNotifierProvider<CartNotifier, List<Product>>((ref) {

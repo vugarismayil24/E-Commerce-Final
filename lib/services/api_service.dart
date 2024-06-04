@@ -13,7 +13,6 @@ class ApiService {
     try {
       final response = await _dio.get('https://fakestoreapi.com/products');
       if (kDebugMode) {
-        print('Veriler başarıyla alındı: ${response.data}');
       }
       return (response.data as List).map((json) => Product.fromJson(json)).toList();
     } catch (e) {

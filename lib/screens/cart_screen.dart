@@ -5,7 +5,7 @@ import '../widgets/quantity_control_widget.dart';
 import 'payment_screen.dart';
 
 class CartScreen extends ConsumerWidget {
-  const CartScreen({super.key});
+  const CartScreen({Key? key}) : super(key: key);
 
   void _showCheckoutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -42,7 +42,8 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItems = ref.watch(cartProvider);
 
-    double totalPrice = cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+    double totalPrice =
+        cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
     double shippingCost = totalPrice > 50 ? 0 : 10;
     double finalTotal = totalPrice + shippingCost;
 
@@ -68,11 +69,12 @@ class CartScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final product = cartItems[index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
                         child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            side: BorderSide(color: Colors.grey.shade300),
+                            side: const BorderSide(color: Colors.grey),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -90,10 +92,11 @@ class CartScreen extends ConsumerWidget {
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            product.title.substring(0,18),
+                                            product.title.substring(0, 18),
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -120,7 +123,9 @@ class CartScreen extends ConsumerWidget {
                                     IconButton(
                                       icon: const Icon(Icons.delete),
                                       onPressed: () {
-                                        ref.read(cartProvider.notifier).removeFromCart(product);
+                                        ref
+                                            .read(cartProvider.notifier)
+                                            .removeFromCart(product);
                                       },
                                     ),
                                   ],
