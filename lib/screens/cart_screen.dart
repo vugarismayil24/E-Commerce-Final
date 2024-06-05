@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/quantity_control_widget.dart';
-import 'payment_screen.dart';
+import 'delivery_options_screen.dart';
+import 'product_detail_screen.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class CartScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const CartScreen()));
               },
               child: const Text('Cancel'),
             ),
@@ -26,9 +27,36 @@ class CartScreen extends ConsumerWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const PaymentScreen(),
+                    builder: (context) => const DeliveryScreen(), // Navigate to DeliveryScreen
                   ),
                 );
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showRemoveDialog(BuildContext context, WidgetRef ref, product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Item'),
+          content: const Text('Are you sure you want to remove this item?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(cartProvider.notifier).removeFromCart(product);
+                Navigator.of(context).pop();
               },
               child: const Text('Confirm'),
             ),
@@ -49,7 +77,8 @@ class CartScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cart'),
+        centerTitle: true,
+        title: const Text('My Cart'),
       ),
       body: cartItems.isEmpty
           ? const Center(
@@ -70,67 +99,62 @@ class CartScreen extends ConsumerWidget {
                       final product = cartItems[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4.0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            side: const BorderSide(color: Colors.grey),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Image.network(
-                                      product.imageUrl,
-                                      fit: BoxFit.cover,
-                                      width: 60,
-                                      height: 60,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            product.title.substring(0, 18),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                            horizontal: 16.0, vertical: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailScreen(product: product),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Image.network(
+                                    product.imageUrl,
+                                    fit: BoxFit.contain,
+                                    width: 80,
+                                    height: 60,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product.title.substring(0,10),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          const SizedBox(height: 4),
-                                          const Text(
-                                            'HUILE "MÉTAL DETOX"\nSERIE EXPERT 50ML',
-                                            style: TextStyle(fontSize: 12),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${product.price} ₼',
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            '${product.price} AZN',
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                    QuantityControl(product: product),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () {
-                                        ref
-                                            .read(cartProvider.notifier)
-                                            .removeFromCart(product);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () => _showRemoveDialog(context, ref, product),
+                                  ),
+                                  QuantityControl(product: product),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -143,44 +167,90 @@ class CartScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Total Price: ${totalPrice.toStringAsFixed(2)} AZN',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      Container(
-                        color: Colors.orange,
-                        padding: const EdgeInsets.all(8.0),
-                        margin: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: const Text(
-                          'Free shipping for orders above 50 AZN',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Total",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ),
-                      Text(
-                        'Shipping: ${shippingCost == 0 ? 'Free' : '10 AZN'}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Final Total: ${finalTotal.toStringAsFixed(2)} AZN',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          Text(
+                            '${totalPrice.toStringAsFixed(2)} ₼',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () => _showCheckoutDialog(context, ref),
-                          child: const Text('Checkout'),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Shipping Fee",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            shippingCost == 0 ? '0' : '10 ₼',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Total",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '${finalTotal.toStringAsFixed(2)} ₼',
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 30),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff2A9D8F),
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                    child: TextButton(
+                      onPressed: () => _showCheckoutDialog(context, ref),
+                      child: const Text(
+                        'Check Out',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
               ],
             ),
     );

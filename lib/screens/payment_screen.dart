@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 
-class PaymentScreen extends StatefulWidget {
+import '../providers/cart_provider.dart';
+import 'payment_succes_screen.dart';
+
+class PaymentScreen extends ConsumerStatefulWidget {
   const PaymentScreen({super.key});
 
   @override
   PaymentScreenState createState() => PaymentScreenState();
 }
 
-class PaymentScreenState extends State<PaymentScreen> {
+class PaymentScreenState extends ConsumerState<PaymentScreen> {
   final _nameController = TextEditingController();
   final _cardNumberController = TextEditingController();
   final _expiryDateController = TextEditingController();
@@ -25,12 +29,14 @@ class PaymentScreenState extends State<PaymentScreen> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Payment successful!'),
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PaymentSuccessScreen(),
         ),
-      );
-      Navigator.of(context).pop();
+      ).then((_) {
+        ref.read(cartProvider.notifier).clearCart();
+      });
     }
   }
 

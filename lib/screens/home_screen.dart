@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:marquee/marquee.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import '../providers/category_provider.dart';
 import '../widgets/product_item_widget.dart';
 
@@ -9,10 +9,10 @@ class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  ProductListScreenState createState() => ProductListScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class ProductListScreenState extends ConsumerState<HomeScreen> {
+class HomeScreenState extends ConsumerState<HomeScreen> {
   String selectedCategory = 'All';
 
   void _showCategoriesModal(BuildContext context) {
@@ -34,7 +34,7 @@ class ProductListScreenState extends ConsumerState<HomeScreen> {
                     setState(() {
                       selectedCategory = category;
                     });
-                    Navigator.pop(context); 
+                    Navigator.pop(context);
                   },
                 );
               },
@@ -63,26 +63,66 @@ class ProductListScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Column(
         children: [
-          Container(
-            color: const Color(0xff2A9D8F),
-            height: 30.h, // Responsive height
-            child: Marquee(
-              text: 'Ürün detay sayfasındasınız. Ürüne dair bilgileri aşağıda bulabilirsiniz.',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff),
-                fontSize: 14.sp, // Responsive font size
-              ),
-              scrollAxis: Axis.horizontal,
-              blankSpace: 20.0.w, // Responsive blank space
-              velocity: 100.0.w, // Responsive velocity
-              pauseAfterRound: const Duration(seconds: 1),
-              startPadding: 10.0.w, // Responsive start padding
-              accelerationDuration: const Duration(seconds: 1),
-              accelerationCurve: Curves.linear,
-              decelerationDuration: const Duration(milliseconds: 1200),
-              decelerationCurve: Curves.easeOut,
-            ),
+          SizedBox(height: 10.h),
+          productsAsyncValue.when(
+            data: (products) {
+              return CarouselSlider(
+                options: CarouselOptions(
+                  height: 150.h,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  aspectRatio: 1.5,
+                  viewportFraction: 0.3, 
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                    });
+                  },
+                ),
+                items: products.map((product) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 5.0.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Image.network(
+                                product.imageUrl,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              child: Text(
+                                product.title.substring(0, 10),
+                                style: TextStyle(fontSize: 12.sp), 
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(height: 5.h),
+                            Flexible(
+                              child: Text(
+                                '${product.price} \$',
+                                style: TextStyle(fontSize: 12.sp), 
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              );
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
           ),
           Expanded(
             child: productsAsyncValue.when(
@@ -91,12 +131,12 @@ class ProductListScreenState extends ConsumerState<HomeScreen> {
                     ? products
                     : products.where((product) => product.category == selectedCategory).toList();
                 return GridView.builder(
-                  padding: EdgeInsets.all(10.w), // Responsive padding
+                  padding: EdgeInsets.all(10.w), 
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 2 / 3,
-                    crossAxisSpacing: 10.h, // Responsive cross axis spacing
-                    mainAxisSpacing: 10.w, // Responsive main axis spacing
+                    crossAxisSpacing: 10.h, 
+                    mainAxisSpacing: 10.w,
                   ),
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
@@ -114,3 +154,4 @@ class ProductListScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
+

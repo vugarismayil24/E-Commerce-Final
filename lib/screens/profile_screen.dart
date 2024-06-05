@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/theme_provider.dart';
-import '../providers/user_provider.dart';
 import '../widgets/setting_widget.dart';
+import 'edit_profile_setting_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -11,10 +11,10 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isDarkMode = ref.watch(themeNotifierProvider) == ThemeMode.dark;
-    final user = ref.watch(userProvider);
 
-    double balance = user.totalSpent;
-    double bonus = user.hasMadePayment && user.totalSpent > 500 ? 50 : 0;
+    const String userName = "Demo User";
+    const int balance = 0;
+    const int bonus = 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -23,11 +23,12 @@ class ProfileScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () => ref.watch(themeNotifierProvider.notifier).toggleTheme(),
+            onPressed: () =>
+                ref.watch(themeNotifierProvider.notifier).toggleTheme(),
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +43,7 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             Center(
               child: Text(
-                user.name,
+                userName,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -52,18 +53,27 @@ class ProfileScreen extends ConsumerWidget {
             Center(
               child: Column(
                 children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: 150,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: theme.primaryColor,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: Text(
-                      "Edit Profile",
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: Colors.white,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const EditProfileScreen()),
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 150,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: theme.primaryColor,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Text(
+                        "Edit Profile",
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -81,10 +91,11 @@ class ProfileScreen extends ConsumerWidget {
                           height: 42,
                           decoration: BoxDecoration(
                             color: theme.colorScheme.secondary,
-                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(5)),
                           ),
                           child: Text(
-                            "Bonus: \$$bonus",
+                            "Bonus: $bonus",
                             style: theme.textTheme.labelLarge?.copyWith(
                               color: Colors.white,
                             ),
@@ -96,10 +107,11 @@ class ProfileScreen extends ConsumerWidget {
                           height: 42,
                           decoration: BoxDecoration(
                             color: theme.colorScheme.secondary,
-                            borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(5)),
                           ),
                           child: Text(
-                            "Balance: \$$balance",
+                            "Balance: $balance",
                             style: theme.textTheme.labelLarge?.copyWith(
                               color: Colors.white,
                             ),
@@ -127,10 +139,11 @@ class ProfileScreen extends ConsumerWidget {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(12)),
                         border: Border.all(
-                            strokeAlign: BorderSide.strokeAlignOutside, color: const Color(0xffE22323))),
+                            strokeAlign: BorderSide.strokeAlignOutside,
+                            color: const Color(0xffE22323))),
                     child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 12, horizontal: 27.5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 27.5),
                       child: Text(
                         "Delete Account",
                         style: theme.textTheme.labelLarge?.copyWith(
@@ -146,12 +159,11 @@ class ProfileScreen extends ConsumerWidget {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(12)),
                         border: Border.all(
-                          color: theme.dividerColor,
-                          strokeAlign: BorderSide.strokeAlignOutside
-                        )),
+                            color: theme.dividerColor,
+                            strokeAlign: BorderSide.strokeAlignOutside)),
                     child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 12, horizontal: 27.5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 27.5),
                       child: Row(
                         children: [
                           Text(

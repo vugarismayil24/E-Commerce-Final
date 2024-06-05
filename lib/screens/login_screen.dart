@@ -1,16 +1,21 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:e_com_app/screens/forgot_password_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../providers/auth_service.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
@@ -26,6 +31,48 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  bool _validateInputs() {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _login() async {
+    if (!_validateInputs()) {
+      return;
+    }
+
+    try {
+      User? user = await AuthService().signInWithEmailPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BottomNavigationBarWidget(),
+          ),
+        );
+      } else {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mail yada sifre yanlisdir')),
+      );
+
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login Error: $e')),
+      );
+    }
   }
 
   @override
@@ -95,7 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       Padding(
                         padding: EdgeInsets.all(8.0.w),
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ForgotPasswordScreen()));
+                          },
                           child: Text(
                             'Forgot Password ?',
                             style: TextStyle(
@@ -108,9 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20.h),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()));
-                    },
+                    onPressed: _login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff264653),
                       minimumSize: Size.fromHeight(50.h),
