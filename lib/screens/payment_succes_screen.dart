@@ -11,13 +11,12 @@ class PaymentSuccessScreen extends StatefulWidget {
 }
 
 class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
-  int _counter = 5; // 5 saniyelik geri sayım için başlangıç değeri
+  int _counter = 50;
   late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    // Timer.periodic ile geri sayımı başlatma
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_counter > 1) {
@@ -54,7 +53,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             ),
             const SizedBox(height: 40),
             const Text(
-              'Ödeme Onayı!',
+              'Payment Confirmation!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -63,7 +62,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Güvenli çevrimiçi ödemenizi aldığımızı onaylıyoruz.',
+          'We confirm we have received your secure online payment.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -71,12 +70,18 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              '$_counter saniye içinde ana ekrana yönlendirileceksiniz...',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xff264653),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'You will be directed to the  home screen within \n$_counter seconds...',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color(0xff264653),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
