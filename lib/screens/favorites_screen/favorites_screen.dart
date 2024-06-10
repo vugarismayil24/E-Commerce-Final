@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/favorites_provider.dart';
-import 'product_detail_screen.dart';
+import '../../providers/favorites_provider.dart';
+import '../product_details_screen/product_detail_screen.dart';
 
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});

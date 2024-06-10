@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/product.dart';
 import '../providers/cart_provider.dart';
-import '../screens/product_detail_screen.dart';
+import '../screens/product_details_screen/product_detail_screen.dart';
 
 class ProductItem extends ConsumerWidget {
   final Product product;

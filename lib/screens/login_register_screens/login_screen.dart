@@ -1,11 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:e_com_app/screens/forgot_password_screen.dart';
+import 'package:e_com_app/screens/forgot_password_screen/forgot_password_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../providers/auth_service.dart';
+import '../../services/auth_service.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -62,11 +62,9 @@ class LoginScreenState extends State<LoginScreen> {
           ),
         );
       } else {
-
         ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mail yada sifre yanlisdir')),
-      );
-
+          const SnackBar(content: Text('Incorrect email or password')),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

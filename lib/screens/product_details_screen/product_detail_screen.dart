@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/product.dart';
-import '../providers/cart_provider.dart';
-import '../providers/favorites_provider.dart';
+import '../../models/product.dart';
+import '../../providers/cart_provider.dart';
+import '../../providers/favorites_provider.dart';
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   final Product product;

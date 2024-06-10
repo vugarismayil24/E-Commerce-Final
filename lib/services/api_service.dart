@@ -11,7 +11,7 @@ class ApiService {
 
   Future<List<Product>> fetchProducts() async {
     try {
-      final response = await _dio.get('https://fakestoreapi.com/products');
+      final response = await _dio.get('https://www.cheapshark.com/api/1.0/deals?storeID=2');
       if (kDebugMode) {
       }
       return (response.data as List).map((json) => Product.fromJson(json)).toList();
@@ -25,7 +25,7 @@ class ApiService {
 
   Future<List<String>> fetchCategories() async {
     try {
-      final response = await _dio.get('https://fakestoreapi.com/products/categories');
+      final response = await _dio.get('https://www.cheapshark.com/api/1.0/deals?storeID=2');
       if (kDebugMode) {
         print('Kategoriler başarıyla alındı: ${response.data}');
       }
@@ -37,4 +37,26 @@ class ApiService {
       return [];
     }
   }
+  // Future<List<Product>> fetchProducts() async {
+  //   try {
+  //     final response = await _dio.get('https://www.cheapshark.com/api/1.0/deals?storeID=2');
+  //     if (kDebugMode) {
+  //       print('Veriler başarıyla alındı: ${response.data}');
+  //     }
+  //     return (response.data as List).map((json) => Product.fromJson(json)).toList();
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('Veri alımı başarısız: $e');
+  //     }
+  //     return [];
+  //   }
+  // }
+
+  // Future<List<String>> fetchCategories() async {
+  //   // Bu metod boş bırakılabilir veya gereksinimlerine göre güncellenebilir
+  //   return [];
+  // }
+  
 }
+
+

@@ -1,4 +1,4 @@
-import 'package:e_com_app/screens/payment_screen.dart';
+import 'package:e_com_app/screens/payment_screen/payment_screen.dart';
 
 import 'package:flutter/material.dart';
 

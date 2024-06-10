@@ -1,6 +1,7 @@
-import 'package:e_com_app/providers/auth_service.dart';
-import 'package:e_com_app/screens/login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_com_app/screens/login_register_screens/login_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,15 +27,30 @@ class SignupPageState extends State<RegisterScreen> {
     _passwordController = TextEditingController();
   }
 
-  Future<void> register() async {
-    await AuthService().registerWithEmailPassword(
-      _emailController.text,
-      _passwordController.text,
-      _fullNameController.text,
-    );
+  Future<void> registerUser() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'userName': _fullNameController.text,
+          'email': _emailController.text,
+          'balance': 0,
+          'bonus': 0,
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: $e')),
+      );
+    }
   }
 
-  
   @override
   void dispose() {
     _fullNameController.dispose();
@@ -44,7 +60,7 @@ class SignupPageState extends State<RegisterScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, {Function()? onTap}) {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
@@ -140,48 +156,31 @@ class SignupPageState extends State<RegisterScreen> {
                     onPressed: () async {
                       if (_fullNameController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Please enter your full name')),
+                          const SnackBar(content: Text('Please enter your full name')),
                         );
                         return;
                       }
-              
-                      if (!_emailController.text
-                          .contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+
+                      if (!_emailController.text.contains('@')) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Please enter a valid email')),
+                          const SnackBar(content: Text('Please enter a valid email')),
                         );
                         return;
                       }
-              
-                      if (_passwordController.text.length < 8 ||
-                          !_passwordController.text
-                              .contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+
+                      if (_passwordController.text.length < 8) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'The password must contain at least 8 characters and contain certain symbols ! @ . #')),
+                          const SnackBar(content: Text('Password must be at least 8 characters long')),
                         );
                         return;
                       }
-              
-                      try {
-                        await AuthService().registerWithEmailPassword(
-                            _emailController.text,
-                            _passwordController.text,
-                            _fullNameController.text);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const BottomNavigationBarWidget()),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Registter unsucces: $e')),
-                        );
-                      }
+
+                      await registerUser();
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff2A9D8F),
@@ -274,8 +273,7 @@ class SignupPageState extends State<RegisterScreen> {
                         onTap: () => Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const LoginScreen()),
+                              builder: (context) => const LoginScreen()),
                         ),
                         child: RichText(
                           text: const TextSpan(

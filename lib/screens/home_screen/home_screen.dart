@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../providers/category_provider.dart';
-import '../widgets/product_item_widget.dart';
+import '../../providers/category_provider.dart';
+import '../../widgets/product_item_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +24,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       builder: (BuildContext context) {
         return categoriesAsyncValue.when(
           data: (categories) {
+           
             return ListView.builder(
               itemCount: categories.length + 1,
               itemBuilder: (context, index) {
@@ -41,7 +43,13 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             );
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(child: Text('Error: $error')),
+          error: (error, stack) {
+            if (kDebugMode) {
+              print('Error: $error');
+            }
+            print('Stack: $stack');
+            return Center(child: Text('Error: $error'));
+          },
         );
       },
     );
@@ -66,6 +74,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           SizedBox(height: 10.h),
           productsAsyncValue.when(
             data: (products) {
+              final filteredProducts = selectedCategory == 'All'
+                  ? products
+                  : products.where((product) => product.category == selectedCategory).toList();
               return CarouselSlider(
                 options: CarouselOptions(
                   height: 150.h,
@@ -78,7 +89,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     });
                   },
                 ),
-                items: products.map((product) {
+                items: filteredProducts.map((product) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Container(
@@ -154,4 +165,3 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-

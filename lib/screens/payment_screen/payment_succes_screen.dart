@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
 
 class PaymentSuccessScreen extends StatefulWidget {
   const PaymentSuccessScreen({super.key});
@@ -11,7 +11,7 @@ class PaymentSuccessScreen extends StatefulWidget {
 }
 
 class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
-  int _counter = 50;
+  int _counter = 5;
   late Timer _timer;
 
   @override
@@ -24,7 +24,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
         } else {
           _timer.cancel();
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
           );
         }
       });

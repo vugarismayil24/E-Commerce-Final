@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -18,7 +20,16 @@ class AuthService {
       User? user = userCredential.user;
 
       if (user != null) {
-
+        // Firestore'a kullanıcı bilgilerini ekle
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'userName': name,
+          'email': email,
+          'balance': 0,
+          'bonus': 0,
+        });
+        // Oturum açma durumunu kaydet
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
       }
 
       return user;
@@ -36,6 +47,10 @@ class AuthService {
         email: email,
         password: password,
       );
+      // Oturum açma durumunu kaydet
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
@@ -47,6 +62,8 @@ class AuthService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
   }
 
   Future<void> resetPassword(String email) async {
@@ -57,5 +74,10 @@ class AuthService {
         print('Reset Password Error: ${e.message}');
       }
     }
+  }
+
+  Future<bool> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
   }
 }

@@ -1,12 +1,12 @@
-import 'package:e_com_app/screens/login_screen.dart';
-import 'package:e_com_app/screens/register_screen.dart';
+import 'package:e_com_app/screens/login_register_screens/login_screen.dart';
+import 'package:e_com_app/screens/login_register_screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../screens/home_screen.dart';
-import '../screens/cart_screen.dart';
-import '../screens/favorites_screen.dart';
-import '../screens/search_screen.dart';
-import '../screens/profile_screen.dart';
+import '../screens/home_screen/home_screen.dart';
+import '../screens/order_screen/cart_screen.dart';
+import '../screens/favorites_screen/favorites_screen.dart';
+import '../screens/search_screen/search_screen.dart';
+import '../screens/profile_setting_screen/profile_screen.dart';
 
 class BottomNavigationBarWidget extends ConsumerStatefulWidget {
   const BottomNavigationBarWidget({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../providers/products_provider.dart';
-import '../widgets/slider_widget.dart'; // SliderWidget'i SliderOptionsWidget olarak değiştirdik
+import '../../providers/products_provider.dart';
+import '../../widgets/slider_widget.dart'; // SliderWidget'i SliderOptionsWidget olarak değiştirdik
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});

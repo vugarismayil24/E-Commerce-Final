@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/cart_provider.dart';
-import '../widgets/quantity_control_widget.dart';
-import 'delivery_options_screen.dart';
-import 'product_detail_screen.dart';
+import '../../providers/cart_provider.dart';
+import '../../widgets/quantity_control_widget.dart';
+import '../delivery_options_screen/delivery_options_screen.dart';
+import '../product_details_screen/product_detail_screen.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({Key? key}) : super(key: key);
