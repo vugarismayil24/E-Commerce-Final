@@ -41,6 +41,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   flutter_screenutil: ^5.9.3
   font_awesome_flutter: ^10.7.0
+  google_sign_in: ^6.2.1
   shared_preferences: ^2.2.3
 
 dev_dependencies:

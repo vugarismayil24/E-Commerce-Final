@@ -63,6 +63,7 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   children: [
                     Image.network(
                       widget.product.imageUrl,
+                      fit: BoxFit.contain,
                       width: 400,
                       height: 300,
                     ),
@@ -71,7 +72,7 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.product.title.substring(0, 18),
+                          widget.product.title.substring(0, 9),
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
@@ -127,7 +128,6 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             onPressed: _incrementQuantity,
                           ),
                         ),
-                        const SizedBox(width: 10),
                         GestureDetector(
                           onTap: _addToCart,
                           child: Container(

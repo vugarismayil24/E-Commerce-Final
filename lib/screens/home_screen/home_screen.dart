@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../../models/product.dart';
 import '../../providers/category_provider.dart';
 import '../../widgets/product_item_widget.dart';
 
@@ -13,160 +14,96 @@ class HomeScreen extends ConsumerStatefulWidget {
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends ConsumerState<HomeScreen> {
-  String selectedCategory = 'All';
+class HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
-  void _showCategoriesModal(BuildContext context) {
-    final categoriesAsyncValue = ref.watch(myCategoriesProvider);
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 0, vsync: this); // Initialize with 0 tabs, will be updated
+    _loadCategories();
+  }
 
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return categoriesAsyncValue.when(
-          data: (categories) {
-            return ListView.builder(
-              itemCount: categories.length + 1,
-              itemBuilder: (context, index) {
-                final category = index == 0 ? 'All' : categories[index - 1];
-                return ListTile(
-                  title: Text(category),
-                  selected: selectedCategory == category,
-                  onTap: () {
-                    setState(() {
-                      selectedCategory = category;
-                    });
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) {
-            if (kDebugMode) {
-              print('Error: $error');
-            }
-            return Center(child: Text('Error: $error'));
-          },
-        );
+  void _loadCategories() {
+    final categoriesAsyncValue = ref.read(myCategoriesProvider);
+
+    categoriesAsyncValue.when(
+      data: (categories) {
+        setState(() {
+          _tabController = TabController(length: categories.length + 1, vsync: this); // +1 for "All" tab
+        });
+      },
+      loading: () {},
+      error: (error, stack) {
+        if (kDebugMode) {
+          print('Error: $error');
+        }
       },
     );
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final productsAsyncValue = ref.watch(myProductsProvider);
+    final categoriesAsyncValue = ref.watch(myCategoriesProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.category),
-            onPressed: () => _showCategoriesModal(context),
-          ),
-        ],
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: productsAsyncValue.when(
-              data: (products) {
-                final filteredProducts = selectedCategory == 'All'
-                    ? products
-                    : products.where((product) => product.category == selectedCategory).toList();
-                return CarouselSlider(
-                  options: CarouselOptions(
-                    height: 150.h,
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                    aspectRatio: 1.5,
-                    viewportFraction: 0.3,
-                    onPageChanged: (index, reason) {
-                      setState(() {});
-                    },
-                  ),
-                  items: filteredProducts.map((product) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 5.0.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: Image.network(
-                                  product.imageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              SizedBox(height: 5.h),
-                              Flexible(
-                                child: Text(
-                                  product.title,
-                                  style: TextStyle(fontSize: 12.sp),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(height: 5.h),
-                              Flexible(
-                                child: Text(
-                                  '${product.price} \$',
-                                  style: TextStyle(fontSize: 12.sp),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
+    return categoriesAsyncValue.when(
+      data: (categories) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Products'),
+            bottom: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              tabs: [
+                Tab(text: 'All'),
+                ...categories.map((category) => Tab(text: category)).toList(),
+              ],
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return productsAsyncValue.when(
-                  data: (products) {
-                    final filteredProducts = selectedCategory == 'All'
-                        ? products
-                        : products.where((product) => product.category == selectedCategory).toList();
-                    return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
-                      shrinkWrap: true,
-                      padding: EdgeInsets.all(10.w),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 2 / 3,
-                        crossAxisSpacing: 10.h,
-                        mainAxisSpacing: 10.w,
-                      ),
-                      itemCount: filteredProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = filteredProducts[index];
-                        return ProductItem(product: product);
-                      },
-                    );
-                  },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Center(child: Text('Error: $error')),
-                );
-              },
-              childCount: 1,
-            ),
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProductsGrid(productsAsyncValue, 'All'),
+              ...categories.map((category) => _buildProductsGrid(productsAsyncValue, category)).toList(),
+            ],
           ),
-        ],
-      ),
+        );
+      },
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stack) => Scaffold(body: Center(child: Text('Error: $error'))),
+    );
+  }
+
+  Widget _buildProductsGrid(AsyncValue<List<Product>> productsAsyncValue, String category) {
+    return productsAsyncValue.when(
+      data: (products) {
+        final filteredProducts = category == 'All'
+            ? products
+            : products.where((product) => product.category == category).toList();
+        return GridView.builder(
+          padding: EdgeInsets.all(10.w),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2 / 3,
+            crossAxisSpacing: 10.h,
+            mainAxisSpacing: 10.w,
+          ),
+          itemCount: filteredProducts.length,
+          itemBuilder: (context, index) {
+            final product = filteredProducts[index];
+            return ProductItem(product: product);
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
     );
   }
 }

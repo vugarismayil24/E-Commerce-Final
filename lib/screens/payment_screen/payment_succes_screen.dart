@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:e_com_app/screens/home_screen/home_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
-
 
 class PaymentSuccessScreen extends StatefulWidget {
   const PaymentSuccessScreen({super.key});
@@ -23,8 +23,9 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
           _counter--;
         } else {
           _timer.cancel();
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+            (Route<dynamic> route) => false,
           );
         }
       });
@@ -62,7 +63,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
             ),
             const SizedBox(height: 10),
             const Text(
-          'We confirm we have received your secure online payment.',
+              'We confirm we have received your secure online payment.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -75,7 +76,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'You will be directed to the  home screen within \n$_counter seconds...',
+                  'You will be directed to the home screen within \n$_counter seconds...',
                   style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xff264653),
@@ -89,5 +90,3 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
     );
   }
 }
-
-
