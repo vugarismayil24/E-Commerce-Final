@@ -24,7 +24,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       builder: (BuildContext context) {
         return categoriesAsyncValue.when(
           data: (categories) {
-           
             return ListView.builder(
               itemCount: categories.length + 1,
               itemBuilder: (context, index) {
@@ -47,7 +46,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             if (kDebugMode) {
               print('Error: $error');
             }
-            print('Stack: $stack');
             return Center(child: Text('Error: $error'));
           },
         );
@@ -69,95 +67,102 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 10.h),
-          productsAsyncValue.when(
-            data: (products) {
-              final filteredProducts = selectedCategory == 'All'
-                  ? products
-                  : products.where((product) => product.category == selectedCategory).toList();
-              return CarouselSlider(
-                options: CarouselOptions(
-                  height: 150.h,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  aspectRatio: 1.5,
-                  viewportFraction: 0.3, 
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                    });
-                  },
-                ),
-                items: filteredProducts.map((product) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5.0.w),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: Image.network(
-                                product.imageUrl,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            SizedBox(height: 5.h),
-                            Flexible(
-                              child: Text(
-                                product.title.substring(0, 10),
-                                style: TextStyle(fontSize: 12.sp), 
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            SizedBox(height: 5.h),
-                            Flexible(
-                              child: Text(
-                                '${product.price} \$',
-                                style: TextStyle(fontSize: 12.sp), 
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Error: $error')),
-          ),
-          Expanded(
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
             child: productsAsyncValue.when(
               data: (products) {
                 final filteredProducts = selectedCategory == 'All'
                     ? products
                     : products.where((product) => product.category == selectedCategory).toList();
-                return GridView.builder(
-                  padding: EdgeInsets.all(10.w), 
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2 / 3,
-                    crossAxisSpacing: 10.h, 
-                    mainAxisSpacing: 10.w,
+                return CarouselSlider(
+                  options: CarouselOptions(
+                    height: 150.h,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    aspectRatio: 1.5,
+                    viewportFraction: 0.3,
+                    onPageChanged: (index, reason) {
+                      setState(() {});
+                    },
                   ),
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (context, index) {
-                    final product = filteredProducts[index];
-                    return ProductItem(product: product);
-                  },
+                  items: filteredProducts.map((product) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5.0.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Image.network(
+                                  product.imageUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(height: 5.h),
+                              Flexible(
+                                child: Text(
+                                  product.title,
+                                  style: TextStyle(fontSize: 12.sp),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(height: 5.h),
+                              Flexible(
+                                child: Text(
+                                  '${product.price} \$',
+                                  style: TextStyle(fontSize: 12.sp),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(child: Text('Error: $error')),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return productsAsyncValue.when(
+                  data: (products) {
+                    final filteredProducts = selectedCategory == 'All'
+                        ? products
+                        : products.where((product) => product.category == selectedCategory).toList();
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
+                      shrinkWrap: true,
+                      padding: EdgeInsets.all(10.w),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 2 / 3,
+                        crossAxisSpacing: 10.h,
+                        mainAxisSpacing: 10.w,
+                      ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return ProductItem(product: product);
+                      },
+                    );
+                  },
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(child: Text('Error: $error')),
+                );
+              },
+              childCount: 1,
             ),
           ),
         ],
