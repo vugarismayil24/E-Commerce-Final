@@ -1,11 +1,15 @@
-import 'package:flutter/foundation.dart';
+import 'package:e_com_app/screens/home_screen/view_proudct_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../models/product.dart';
-import '../../providers/category_provider.dart';
+
+import '../../models/product_model.dart';
+import '../../providers/seller_provider.dart';
 import '../../widgets/product_item_widget.dart';
+import '../seller_screens/add_product_screen.dart';
+import '../seller_screens/edit_product_screen.dart';
+import '../seller_screens/remove_products_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -14,96 +18,191 @@ class HomeScreen extends ConsumerStatefulWidget {
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends ConsumerState<HomeScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class HomeScreenState extends ConsumerState<HomeScreen> {
+  String selectedCategory = 'All';
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 0, vsync: this); // Initialize with 0 tabs, will be updated
-    _loadCategories();
-  }
-
-  void _loadCategories() {
-    final categoriesAsyncValue = ref.read(myCategoriesProvider);
-
-    categoriesAsyncValue.when(
-      data: (categories) {
-        setState(() {
-          _tabController = TabController(length: categories.length + 1, vsync: this); // +1 for "All" tab
-        });
-      },
-      loading: () {},
-      error: (error, stack) {
-        if (kDebugMode) {
-          print('Error: $error');
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  // Kategoriler listesi
+  final List<String> categories = ['All', 'Under \$10', 'Free'];
 
   @override
   Widget build(BuildContext context) {
-    final productsAsyncValue = ref.watch(myProductsProvider);
-    final categoriesAsyncValue = ref.watch(myCategoriesProvider);
+    final products = ref.watch(productProvider);
+    final userRole = ref.watch(userRoleProvider);
 
-    return categoriesAsyncValue.when(
-      data: (categories) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Products'),
-            bottom: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabs: [
-                Tab(text: 'All'),
-                ...categories.map((category) => Tab(text: category)).toList(),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Products'),
+        automaticallyImplyLeading: false,
+        actions: [
+          if (userRole == 'seller')
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return MenuDrawer(products: products);
+                  },
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                );
+              },
             ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Carousel Slider for Categories
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 30.h,
+              autoPlay: true,
+              enlargeCenterPage: false,
+              viewportFraction: 0.5,
+            ),
+            items: categories.map((category) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedCategory = category;
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5.0.w),
+                  decoration: BoxDecoration(
+                    color: selectedCategory == category
+                        ? Colors.blueAccent
+                        : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      category,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: selectedCategory == category
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildProductsGrid(productsAsyncValue, 'All'),
-              ...categories.map((category) => _buildProductsGrid(productsAsyncValue, category)).toList(),
-            ],
+          SizedBox(height: 20.h), // 20 piksel mesafe
+          // Products Grid
+          Expanded(
+            child: products.isEmpty
+                ? const Center(child: Text('No products available'))
+                : GridView.builder(
+                    padding: EdgeInsets.all(10.w),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2 / 3,
+                      crossAxisSpacing: 10.h,
+                      mainAxisSpacing: 10.w,
+                    ),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return ProductItem(product: product);
+                    },
+                  ),
           ),
-        );
-      },
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, stack) => Scaffold(body: Center(child: Text('Error: $error'))),
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildProductsGrid(AsyncValue<List<Product>> productsAsyncValue, String category) {
-    return productsAsyncValue.when(
-      data: (products) {
-        final filteredProducts = category == 'All'
-            ? products
-            : products.where((product) => product.category == category).toList();
-        return GridView.builder(
-          padding: EdgeInsets.all(10.w),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2 / 3,
-            crossAxisSpacing: 10.h,
-            mainAxisSpacing: 10.w,
-          ),
-          itemCount: filteredProducts.length,
-          itemBuilder: (context, index) {
-            final product = filteredProducts[index];
-            return ProductItem(product: product);
-          },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+class MenuDrawer extends StatelessWidget {
+  final List<Product> products;
+
+  MenuDrawer({required this.products});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width * 0.8,
+      child: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              child: Text('Menü'),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ListTile(
+              title: const Text('Ürün Ekle'),
+              onTap: () {
+                Navigator.pop(context); // Menü kapat
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddProductScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Ürün Düzenle'),
+              onTap: () {
+                Navigator.pop(context); // Menü kapat
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return ListView.builder(
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return ListTile(
+                          title: Text(product.title),
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProductScreen(
+                                  index: index,
+                                  product: product,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Ürün Sil'),
+              onTap: () {
+                Navigator.pop(context); // Menü kapat
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DeleteProductScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Ürünlere Bak'),
+              onTap: () {
+                Navigator.pop(context); // Menü kapat
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ViewProductsScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

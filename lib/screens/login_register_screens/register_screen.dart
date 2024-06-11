@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'seller_register_screen.dart'; // Yeni sayfa için import
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -43,6 +44,12 @@ class SignupPageState extends State<RegisterScreen> {
           'balance': 0,
           'bonus': 0,
         });
+        
+        // Başarılı kayıt işlemi sonrası kullanıcıyı ana ekrana yönlendirme
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -176,11 +183,6 @@ class SignupPageState extends State<RegisterScreen> {
                       }
 
                       await registerUser();
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
-                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff2A9D8F),
@@ -191,6 +193,28 @@ class SignupPageState extends State<RegisterScreen> {
                     ),
                     child: const Text(
                       'Create Account',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SellerRegisterScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffE76F51),
+                      minimumSize: Size.fromHeight(50.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: const Text(
+                      'Satıcı Hesabı Aç',
                       style: TextStyle(
                         color: Colors.white,
                       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/product.dart';
+import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/favorites_provider.dart';
 
@@ -51,6 +51,12 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       appBar: AppBar(
         title: const Text("Details"),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: Column(
         children: [

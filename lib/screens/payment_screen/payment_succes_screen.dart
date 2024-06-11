@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:e_com_app/screens/home_screen/home_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
 

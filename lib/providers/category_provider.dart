@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/product.dart';
+import '../models/product_model.dart';
 import '../services/api_service.dart';
 
 final myProductsProvider = FutureProvider<List<Product>>((ref) async {

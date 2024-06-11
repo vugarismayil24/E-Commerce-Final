@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/product.dart';
+import '../models/product_model.dart';
 import '../providers/cart_provider.dart';
 import '../screens/product_details_screen/product_detail_screen.dart';
 
@@ -12,6 +12,8 @@ class ProductItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    bool isFree = product.price <= 1;
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushReplacement(
@@ -25,12 +27,12 @@ class ProductItem extends ConsumerWidget {
         height: 300.h,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r), 
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2.w, 
-              blurRadius: 5.w, 
+              spreadRadius: 2.w,
+              blurRadius: 5.w,
               offset: const Offset(0, 3),
             ),
           ],
@@ -60,18 +62,44 @@ class ProductItem extends ConsumerWidget {
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 5.h),
-            Text(
-              "${product.price.toDouble().toString()} AZN",
-              style: TextStyle(
-                fontSize: 18.sp, 
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFE22323),
+            if (isFree) ...[
+              Text(
+                "${product.price.toDouble().toString()} AZN",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFFE22323),
+                  decoration: TextDecoration.lineThrough,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 15.h), 
+              Text(
+                "0 AZN",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ] else ...[
+              Text(
+                "${product.price.toDouble().toString()} AZN",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFFE22323),
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+            const Spacer(),
             Padding(
               padding: EdgeInsets.only(left: 120.w, top: 7.4.h),
               child: GestureDetector(
@@ -87,7 +115,7 @@ class ProductItem extends ConsumerWidget {
                   child: Icon(
                     Icons.shopping_bag_outlined,
                     color: Colors.white,
-                    size: 25.w, 
+                    size: 25.w,
                   ),
                 ),
               ),
