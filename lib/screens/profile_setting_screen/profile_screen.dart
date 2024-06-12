@@ -79,7 +79,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         return AlertDialog(
           title: const Text('Confirm Deletion'),
           content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
-          actions: <Widget>[
+          actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -106,6 +106,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
+
         title: const Text("Profile"),
         centerTitle: true,
         actions: [

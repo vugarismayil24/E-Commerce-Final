@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product_model.dart';
 
 class CartNotifier extends StateNotifier<List<Product>> {
-  CartNotifier() : super([]);
+  CartNotifier() : super([]) {
+    loadCart();
+  }
 
   void addToCart(Product product, {int quantity = 1}) {
     final existingProduct = state.firstWhere(
@@ -21,14 +25,17 @@ class CartNotifier extends StateNotifier<List<Product>> {
     } else {
       state = [...state, product.copyWith(quantity: quantity)];
     }
+    saveCart();
   }
 
   void removeFromCart(Product product) {
     state = state.where((item) => item.title != product.title).toList();
+    saveCart();
   }
 
   void clearCart() {
     state = [];
+    saveCart();
   }
 
   void updateQuantity(Product product, int change) {
@@ -39,10 +46,24 @@ class CartNotifier extends StateNotifier<List<Product>> {
       }
       return item;
     }).toList();
+    saveCart();
   }
 
   void incrementQuantity(Product product) => updateQuantity(product, 1);
   void decrementQuantity(Product product) => updateQuantity(product, -1);
+
+  Future<void> loadCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartString = prefs.getString('cart') ?? '[]';
+    final List<dynamic> cartJson = jsonDecode(cartString);
+    state = cartJson.map((json) => Product.fromJson(json)).toList();
+  }
+
+  Future<void> saveCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartString = jsonEncode(state.map((product) => product).toList());
+    await prefs.setString('cart', cartString);
+  }
 }
 
 final cartProvider = StateNotifierProvider<CartNotifier, List<Product>>((ref) {

@@ -1,3 +1,4 @@
+import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/product_model.dart';
@@ -54,7 +55,7 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavigationBarWidget(),));
           },
         ),
       ),

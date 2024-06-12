@@ -40,6 +40,7 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: theme.appBarTheme.backgroundColor,
             title: SizedBox(
               height: 40.h,

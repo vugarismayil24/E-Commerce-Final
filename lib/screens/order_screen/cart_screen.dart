@@ -1,12 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/quantity_control_widget.dart';
 import '../delivery_options_screen/delivery_options_screen.dart';
+import '../home_screen/home_screen.dart';
 import '../product_details_screen/product_detail_screen.dart';
 
-class CartScreen extends ConsumerWidget {
+class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
+
+  @override
+  CartScreenState createState() => CartScreenState();
+}
+
+class CartScreenState extends ConsumerState<CartScreen> {
+  bool _isCouponApplied = false;
+  double _discountAmount = 0.0;
+  late TextEditingController _couponController;
+
+  @override
+  void initState() {
+    super.initState();
+    _couponController = TextEditingController();
+    _loadCart();
+  }
+
+  Future<void> _loadCart() async {
+    await ref.read(cartProvider.notifier).loadCart();
+  }
+
+  void _applyCoupon() {
+    if (_couponController.text == 'NEWUSER') {
+      setState(() {
+        _isCouponApplied = true;
+        _discountAmount = 50.0; // Example discount
+      });
+    } else {
+      setState(() {
+        _isCouponApplied = false;
+        _discountAmount = 0.0;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid coupon code')),
+      );
+    }
+  }
 
   void _showCheckoutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -18,7 +58,7 @@ class CartScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const CartScreen()));
+                Navigator.pop(context);
               },
               child: const Text('Cancel'),
             ),
@@ -39,7 +79,7 @@ class CartScreen extends ConsumerWidget {
     );
   }
 
-  void _showRemoveDialog(BuildContext context, WidgetRef ref, product) {
+  void _showRemoveDialog(BuildContext context, WidgetRef ref, Product product) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -67,83 +107,99 @@ class CartScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final cartItems = ref.watch(cartProvider);
 
-    double totalPrice =
-        cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
-    double shippingCost = totalPrice > 50 ? 0 : 10;
-    double finalTotal = totalPrice + shippingCost;
+    double totalPrice = cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+    double taxesAndCharges = totalPrice * 0.05; // Example tax and charge calculation
+    double finalTotal = totalPrice + taxesAndCharges - _discountAmount;
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('My Cart'),
-      ),
-      body: cartItems.isEmpty
-          ? const Center(
-              child: Text(
-                'Your cart is empty',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.red,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          
+          title: const Text('Order details'),
+                    automaticallyImplyLeading: false,
+
+        ),
+        body: cartItems.isEmpty
+            ? const Center(
+                child: Text(
+                  'Your cart is empty',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.red,
+                  ),
                 ),
-              ),
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: cartItems.length,
-                    itemBuilder: (context, index) {
-                      final product = cartItems[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailScreen(product: product),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 255, 255, 255),
-                              borderRadius: BorderRadius.circular(12.0),
+              )
+            : Padding(
+                padding: EdgeInsets.all(16.0.w),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: cartItems.length,
+                        itemBuilder: (context, index) {
+                          final product = cartItems[index];
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
+                            margin: EdgeInsets.symmetric(vertical: 8.h),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0.w),
                               child: Row(
                                 children: [
-                                  Image.network(
-                                    product.imageUrl,
-                                    fit: BoxFit.contain,
-                                    width: 80,
-                                    height: 60,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    child: Image.network(
+                                      product.imageUrl,
+                                      fit: BoxFit.cover,
+                                      width: 80.w,
+                                      height: 80.h,
+                                    ),
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: 10.w),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          product.title.substring(0,10),
-                                          style: const TextStyle(
-                                            fontSize: 16,
+                                          product.title,
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          '${product.price} ₼',
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
+                                        SizedBox(height: 4.h),
+                                        Row(
+                                          children: [
+                                            const Text('Customized'),
+                                            Icon(Icons.arrow_drop_down, size: 16.sp),
+                                          ],
+                                        ),
+                                        SizedBox(height: 4.h),
+                                        Row(
+                                          children: [
+                                            QuantityControl(product: product),
+                                            Spacer(),
+                                            Text(
+                                              '${product.price * product.quantity} ₼',
+                                              style: TextStyle(
+                                                fontSize: 18.sp,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -152,107 +208,153 @@ class CartScreen extends ConsumerWidget {
                                     icon: const Icon(Icons.delete),
                                     onPressed: () => _showRemoveDialog(context, ref, product),
                                   ),
-                                  QuantityControl(product: product),
                                 ],
                               ),
                             ),
-                          ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 2.w,
+                              blurRadius: 5.w,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Total",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            '${totalPrice.toStringAsFixed(2)} ₼',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: _applyCoupon,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(Icons.card_giftcard, color: Colors.purple, size: 20.w),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        'Apply Coupon',
+                                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  Icon(Icons.arrow_forward_ios, size: 16.sp),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(height: 8.h),
+                            if (!_isCouponApplied)
+                              TextField(
+                                controller: _couponController,
+                                decoration: InputDecoration(
+                                  hintText: 'Enter coupon code',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                ),
+                              ),
+                            SizedBox(height: 16.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Subtotal',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${totalPrice.toStringAsFixed(2)} ₼',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Taxes and Charges',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${taxesAndCharges.toStringAsFixed(2)} ₼',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Discount',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${_discountAmount.toStringAsFixed(2)} ₼',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Total',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${finalTotal.toStringAsFixed(2)} ₼',
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      Row(
+                    ),
+                    SizedBox(height: 20.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            "Shipping Fee",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            shippingCost == 0 ? '0' : '10 ₼',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Total",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
                           Text(
                             '${finalTotal.toStringAsFixed(2)} ₼',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => _showCheckoutDialog(context, ref),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.yellow[700],
+                              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                            ),
+                            child: Text(
+                              'MAKE PAYMENT',
+                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff2A9D8F),
-                      borderRadius: BorderRadius.circular(18.0),
                     ),
-                    child: TextButton(
-                      onPressed: () => _showCheckoutDialog(context, ref),
-                      child: const Text(
-                        'Check Out',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                    SizedBox(height: 20.h),
+                  ],
                 ),
-                const SizedBox(height: 30),
-              ],
-            ),
+              ),
+      ),
     );
   }
 }

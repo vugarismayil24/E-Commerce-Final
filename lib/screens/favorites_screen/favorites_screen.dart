@@ -12,6 +12,7 @@ class FavoritesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Favoriler'),
       ),
       body: favoriteItems.isEmpty

@@ -3,7 +3,6 @@ import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../home_screen/home_screen.dart';
 
 class SellerRegisterScreen extends StatefulWidget {
   const SellerRegisterScreen({super.key});

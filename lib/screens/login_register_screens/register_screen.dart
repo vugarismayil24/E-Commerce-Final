@@ -1,14 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_com_app/screens/login_register_screens/login_screen.dart';
-import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'seller_register_screen.dart'; // Yeni sayfa için import
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../widgets/bottom_navigation_bar_widget.dart';
+import 'login_screen.dart';
+import 'seller_register_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   SignupPageState createState() => SignupPageState();
@@ -19,6 +20,7 @@ class SignupPageState extends State<RegisterScreen> {
   late TextEditingController _fullNameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  bool _passwordVisible = false;
 
   @override
   void initState() {
@@ -26,6 +28,7 @@ class SignupPageState extends State<RegisterScreen> {
     _fullNameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _passwordVisible = false;
   }
 
   Future<void> registerUser() async {
@@ -67,251 +70,225 @@ class SignupPageState extends State<RegisterScreen> {
   }
 
   @override
-  Widget build(BuildContext context, {Function()? onTap}) {
+  Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
         return Scaffold(
-          body: Padding(
-            padding: EdgeInsets.all(16.0.w),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 32.h),
-                  Center(
-                    child: Text(
-                      'Welcome MCOM',
-                      style: TextStyle(
-                        fontSize: 30.sp,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 32.h),
-                  TextField(
-                    controller: _fullNameController,
-                    decoration: InputDecoration(
-                      hintText: 'Full Name',
-                      hintStyle: TextStyle(
-                        color: Colors.black.withAlpha(100),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      filled: true,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      hintText: 'E-mail or Name',
-                      hintStyle: TextStyle(
-                        color: Colors.black.withAlpha(100),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      filled: true,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      hintStyle: TextStyle(
-                        color: Colors.black.withAlpha(100),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      filled: true,
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _acceptedTerms,
-                        onChanged: (value) {
-                          setState(() {
-                            _acceptedTerms = value!;
-                          });
-                        },
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Text(
-                          'accept the Terms of Policies conditions.',
-                          style: TextStyle(
-                            color: Color(0xff264653),
-                          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      height: 900.h,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFEE7752), Color(0xFFE73C7E)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_fullNameController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter your full name')),
-                        );
-                        return;
-                      }
-
-                      if (!_emailController.text.contains('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please enter a valid email')),
-                        );
-                        return;
-                      }
-
-                      if (_passwordController.text.length < 8) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Password must be at least 8 characters long')),
-                        );
-                        return;
-                      }
-
-                      await registerUser();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff2A9D8F),
-                      minimumSize: Size.fromHeight(50.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
                     ),
-                    child: const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SellerRegisterScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffE76F51),
-                      minimumSize: Size.fromHeight(50.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                    ),
-                    child: const Text(
-                      'Satıcı Hesabı Aç',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const FaIcon(Icons.warning),
-                      ),
-                      Text(
-                        'Error message...',
-                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  Center(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: const Color(0xff264653),
-                            thickness: 1.h,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w),
-                          child: const Text(
-                            'OR',
+                    Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 100.h),
+                          Text(
+                            'GameStore',
                             style: TextStyle(
-                              color: Color(0xff264653),
+                              fontSize: 40.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: const Color(0xff264653),
-                            thickness: 1.h,
+                          SizedBox(height: 20.h),
+                          Container(
+                            width: 320.w,
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 20.r,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {},
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                                        child: Text(
+                                          'Sign up',
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                                        child: Text(
+                                          'Sign in',
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black26,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 20.h),
+                                InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                                    margin: EdgeInsets.symmetric(horizontal: 16.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10.r),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black12,
+                                          blurRadius: 20.r,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const FaIcon(FontAwesomeIcons.google, color: Colors.red),
+                                        SizedBox(width: 10.w),
+                                        Text(
+                                          'GOOGLE',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                  child: Column(
+                                    children: [
+                                      TextField(
+                                        controller: _fullNameController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Name',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10.r),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10.h),
+                                      TextField(
+                                        controller: _emailController,
+                                        decoration: InputDecoration(
+                                          hintText: 'Email address',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10.r),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10.h),
+                                      TextField(
+                                        controller: _passwordController,
+                                        obscureText: !_passwordVisible,
+                                        decoration: InputDecoration(
+                                          hintText: 'Password',
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(10.r),
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              _passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _passwordVisible = !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    if (_fullNameController.text.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Please enter your full name')),
+                                      );
+                                      return;
+                                    }
+
+                                    if (!_emailController.text.contains('@')) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Please enter a valid email')),
+                                      );
+                                      return;
+                                    }
+
+                                    if (_passwordController.text.length < 8) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Password must be at least 8 characters long')),
+                                      );
+                                      return;
+                                    }
+
+                                    await registerUser();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xff2A9D8F),
+                                    minimumSize: Size(280.w, 50.h),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Create account',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Image.network(
-                            'https://img.icons8.com/color/48/000000/facebook.png'),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Image.network(
-                            'https://img.icons8.com/color/48/000000/google-logo.png'),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Image.network(
-                            'https://img.icons8.com/ios-filled/50/000000/mac-os.png'),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: '*Already have an account ?',
-                          style: TextStyle(
-                              fontSize: 14.sp, color: const Color(0xffE22323)),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                        ),
-                        child: RichText(
-                          text: const TextSpan(
-                            text: ' Log in',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff4971FE)),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           ),
         );

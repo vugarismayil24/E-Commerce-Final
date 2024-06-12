@@ -8,12 +8,10 @@ import '../screens/product_details_screen/product_detail_screen.dart';
 class ProductItem extends ConsumerWidget {
   final Product product;
 
-  const ProductItem({super.key, required this.product});
+  const ProductItem({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool isFree = product.price <= 1;
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushReplacement(
@@ -65,52 +63,55 @@ class ProductItem extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 5.h),
-            if (isFree) ...[
-              Text(
-                "${product.price.toDouble().toString()} AZN",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFE22323),
-                  decoration: TextDecoration.lineThrough,
-                ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
+            Text(
+              "${product.price.toDouble().toString()} AZN",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFE22323),
               ),
-              Text(
-                "0 AZN",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ] else ...[
-              Text(
-                "${product.price.toDouble().toString()} AZN",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFE22323),
-                ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
             const Spacer(),
             Padding(
               padding: EdgeInsets.only(left: 120.w, top: 7.4.h),
               child: GestureDetector(
                 onTap: () {
                   ref.read(cartProvider.notifier).addToCart(product);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Product added to cart!'),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      backgroundColor: Colors.green,
+                      margin: EdgeInsets.only(
+                        top: 50.h,
+                        right: 10.w,
+                      ),
+                      animation: CurvedAnimation(
+                        parent: AnimationController(
+                          duration: const Duration(seconds: 2),
+                          vsync: Scaffold.of(context),
+                        ),
+                        curve: Curves.easeOut,
+                      ),
+                    ),
+                  );
                 },
-                child: Container(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
                   padding: EdgeInsets.only(right: 8.w, left: 12.w, bottom: 3.h),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), topLeft: Radius.circular(10)),
-                    color: Color(0xff2A9D8F),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        bottomRight: Radius.circular(10),
+                        topLeft: Radius.circular(10)),
+                    color: ref.read(cartProvider).contains(product)
+                        ? Colors.green
+                        : Colors.green,
                   ),
                   child: Icon(
                     Icons.shopping_bag_outlined,
