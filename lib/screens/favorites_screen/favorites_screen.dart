@@ -1,5 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../providers/favorites_provider.dart';
 import '../product_details_screen/product_detail_screen.dart';
 
@@ -13,11 +17,11 @@ class FavoritesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Favoriler'),
+        title:  Text(LocaleKeys.Favorites.tr()),
       ),
       body: favoriteItems.isEmpty
-          ? const Center(
-              child: Text('Favori öğe yok'),
+          ?  Center(
+              child: Text(LocaleKeys.NoFavoriteItem.tr()),
             )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

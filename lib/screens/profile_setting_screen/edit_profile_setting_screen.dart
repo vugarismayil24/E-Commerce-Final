@@ -1,3 +1,5 @@
+import 'package:e_com_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -92,12 +94,6 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // leading: IconButton(
-        //   // icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     // Navigator.pushReplacement(context, BottomNavigationBarWidget())
-        //   },
-        // ),
         title: const Text('Edit Profile'),
       ),
       body: Padding(
@@ -106,22 +102,22 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              const Text(
-                'Please complete your profile',
-                style: TextStyle(fontSize: 16.0),
+               Text(
+                LocaleKeys.PleaseCompleteYourProfile.tr(),
+                style: const TextStyle(fontSize: 16.0),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16.0),
-              buildTextField(_emailController, Icons.email, 'Email'),
+              buildTextField(_emailController, Icons.email, LocaleKeys.Email.tr()),
               buildTextField(
-                  _phoneNumberController, Icons.phone, '+ Phone number'),
-              buildTextField(_usernameController, Icons.person, 'Username'),
-              buildTextField(_passwordController, Icons.lock, 'Password',
+                  _phoneNumberController, Icons.phone, LocaleKeys.PhoneNumber.tr()),
+              buildTextField(_usernameController, Icons.person, LocaleKeys.UserName.tr()),
+              buildTextField(_passwordController, Icons.lock, LocaleKeys.Password.tr(),
                   obscureText: true),
-              buildTextField(_dobController, Icons.calendar_today, 'Birthday'),
-              buildTextField(_address1Controller, Icons.home, 'Address 1'),
-              buildTextField(_address2Controller, Icons.home, 'Address 2'),
-              buildTextField(_postalCodeController, Icons.mail, 'Postal Code'),
+              buildTextField(_dobController, Icons.calendar_today, LocaleKeys.Birtday.tr()),
+              buildTextField(_address1Controller, Icons.home, LocaleKeys.Address1.tr()),
+              buildTextField(_address2Controller, Icons.home, LocaleKeys.Addres2.tr()),
+              buildTextField(_postalCodeController, Icons.mail, LocaleKeys.PostalCode.tr()),
               const SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: () {

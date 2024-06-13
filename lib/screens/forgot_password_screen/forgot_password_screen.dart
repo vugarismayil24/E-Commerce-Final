@@ -1,4 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../services/auth_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -21,7 +25,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _resetPassword() async {
     await _authService.resetPassword(_emailController.text);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password reset email sent')),
+       SnackBar(content: Text(LocaleKeys.PasswordResetEmailSent.tr())),
     );
   }
 
@@ -29,7 +33,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forgot Password'),
+        title:  Text(LocaleKeys.ForgotPassword.tr()),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -37,20 +41,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Please enter your email to reset the password',
+             Text(
+              LocaleKeys.PleaseEnterYourEmailToResetThePassword.tr(),
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 10),
-            const Text(
-              'Your Email',
+             Text(
+              LocaleKeys.YourEmail.tr(),
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                hintText: 'Enter your email',
+              decoration:  InputDecoration(
+                hintText: LocaleKeys.EnterYourEmail.tr(),
                 border: OutlineInputBorder(),
               ),
             ),
@@ -66,8 +70,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
-                  'Reset Password',
+                child:  Text(
+                  LocaleKeys.ResetPassword.tr(),
                   style: TextStyle(fontSize: 16),
                 ),
               ),

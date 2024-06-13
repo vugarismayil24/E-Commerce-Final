@@ -1,9 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:e_com_app/screens/forgot_password_screen/forgot_password_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../services/auth_service.dart';
 import 'register_screen.dart';
 
@@ -132,13 +136,16 @@ class LoginScreenState extends State<LoginScreen> {
                                       onTap: () {
                                         Navigator.pushReplacement(
                                           context,
-                                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const RegisterScreen()),
                                         );
                                       },
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.h, horizontal: 16.w),
                                         child: Text(
-                                          'Sign up',
+                                          LocaleKeys.SignUp.tr(),
                                           style: TextStyle(
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
@@ -150,9 +157,10 @@ class LoginScreenState extends State<LoginScreen> {
                                     InkWell(
                                       onTap: () {},
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.h, horizontal: 16.w),
                                         child: Text(
-                                          'Sign in',
+                                          LocaleKeys.SignIn.tr(),
                                           style: TextStyle(
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
@@ -167,8 +175,10 @@ class LoginScreenState extends State<LoginScreen> {
                                 InkWell(
                                   onTap: () {},
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    margin: EdgeInsets.symmetric(horizontal: 16.w),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 12.h),
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 16.w),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(10.r),
@@ -179,33 +189,48 @@ class LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ],
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const FaIcon(FontAwesomeIcons.google, color: Colors.red),
-                                        SizedBox(width: 10.w),
-                                        Text(
-                                          'GOOGLE',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: Colors.black54,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        AuthService().signInWithGoole();
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const BottomNavigationBarWidget(),
+                                            ));
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const FaIcon(FontAwesomeIcons.google,
+                                              color: Colors.red),
+                                          SizedBox(width: 10.w),
+                                          Text(
+                                            'Google',
+                                            style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.black54,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(height: 20.h),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.w),
                                   child: Column(
                                     children: [
                                       TextField(
                                         controller: _emailController,
                                         decoration: InputDecoration(
-                                          hintText: 'Email address',
+                                          hintText: LocaleKeys.Email.tr(),
                                           border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
                                           ),
                                         ),
                                       ),
@@ -214,9 +239,10 @@ class LoginScreenState extends State<LoginScreen> {
                                         controller: _passwordController,
                                         obscureText: !_passwordVisible,
                                         decoration: InputDecoration(
-                                          hintText: 'Password',
+                                          hintText: LocaleKeys.Password.tr(),
                                           border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
                                           ),
                                           suffixIcon: IconButton(
                                             icon: Icon(
@@ -226,7 +252,8 @@ class LoginScreenState extends State<LoginScreen> {
                                             ),
                                             onPressed: () {
                                               setState(() {
-                                                _passwordVisible = !_passwordVisible;
+                                                _passwordVisible =
+                                                    !_passwordVisible;
                                               });
                                             },
                                           ),
@@ -234,19 +261,21 @@ class LoginScreenState extends State<LoginScreen> {
                                       ),
                                       SizedBox(height: 10.h),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => const ForgotPasswordScreen(),
+                                                  builder: (context) =>
+                                                      const ForgotPasswordScreen(),
                                                 ),
                                               );
                                             },
                                             child: Text(
-                                              'Forgot Password?',
+                                              LocaleKeys.ForgotPassword.tr(),
                                               style: TextStyle(
                                                 color: Colors.blue,
                                                 fontSize: 14.sp,
@@ -268,8 +297,8 @@ class LoginScreenState extends State<LoginScreen> {
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Login',
+                                  child:  Text(
+                                    LocaleKeys.Login.tr(),
                                     style: TextStyle(
                                       color: Colors.white,
                                     ),

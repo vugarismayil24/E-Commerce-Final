@@ -1,3 +1,6 @@
+import 'package:e_com_app/generated/locale_keys.g.dart';
+import 'package:e_com_app/services/auth_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -126,7 +129,7 @@ class SignupPageState extends State<RegisterScreen> {
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
                                         child: Text(
-                                          'Sign up',
+                                          LocaleKeys.SignUp.tr(),
                                           style: TextStyle(
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
@@ -145,7 +148,7 @@ class SignupPageState extends State<RegisterScreen> {
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
                                         child: Text(
-                                          'Sign in',
+                                          LocaleKeys.SignIn.tr(),
                                           style: TextStyle(
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
@@ -172,19 +175,25 @@ class SignupPageState extends State<RegisterScreen> {
                                         ),
                                       ],
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const FaIcon(FontAwesomeIcons.google, color: Colors.red),
-                                        SizedBox(width: 10.w),
-                                        Text(
-                                          'GOOGLE',
-                                          style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: Colors.black54,
+                                    child: InkWell(
+                                      onTap: () async{
+                                        AuthService().signInWithGoole();
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget(),));
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const FaIcon(FontAwesomeIcons.google, color: Colors.red),
+                                          SizedBox(width: 10.w),
+                                          Text(
+                                            'Google',
+                                            style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.black54,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -196,7 +205,7 @@ class SignupPageState extends State<RegisterScreen> {
                                       TextField(
                                         controller: _fullNameController,
                                         decoration: InputDecoration(
-                                          hintText: 'Name',
+                                          hintText: LocaleKeys.Name.tr(),
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(10.r),
                                           ),
@@ -206,7 +215,7 @@ class SignupPageState extends State<RegisterScreen> {
                                       TextField(
                                         controller: _emailController,
                                         decoration: InputDecoration(
-                                          hintText: 'Email address',
+                                          hintText:  LocaleKeys.Email.tr(),
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(10.r),
                                           ),
@@ -217,7 +226,7 @@ class SignupPageState extends State<RegisterScreen> {
                                         controller: _passwordController,
                                         obscureText: !_passwordVisible,
                                         decoration: InputDecoration(
-                                          hintText: 'Password',
+                                          hintText:  LocaleKeys.Password.tr(),
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(10.r),
                                           ),
@@ -271,9 +280,9 @@ class SignupPageState extends State<RegisterScreen> {
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Create account',
-                                    style: TextStyle(
+                                  child:  Text(
+                                     LocaleKeys.SignUp.tr(),
+                                    style: const TextStyle(
                                       color: Colors.white,
                                     ),
                                   ),

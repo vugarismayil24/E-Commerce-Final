@@ -1,3 +1,5 @@
+import 'package:e_com_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,16 +16,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class HomeScreenState extends ConsumerState<HomeScreen> {
   String selectedCategory = 'All';
-  String sortOption = 'Price: Low to High';
-  double maxPrice = 100.0; // Max price filter
+  String sortOption = LocaleKeys.PriceHighToLow.tr();
+  double maxPrice = 25.0; // Max price filter
 
-  // Kategoriler listesi
-  final List<String> categories = ['All', 'Under \$10', 'Free'];
+  // Kategoriler listesi (sadece 'All' kaldı)
+  final String category = 'All';
   final List<String> sortOptions = [
-    'Price: Low to High',
-    'Price: High to Low',
-    'A to Z',
-    'Z to A'
+    LocaleKeys.PriceLowToHigh.tr(),
+    LocaleKeys.PriceHighToLow.tr(),
   ];
 
   List filteredProducts = [];
@@ -40,15 +40,19 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            _showFilterMenu(context);
-          },
-        ),
-        title: const Text('Products'),
+        title: Text(LocaleKeys.Products.tr()),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -61,20 +65,76 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           )
         ],
       ),
-      body: productsAsyncValue.when(
-        data: (products) {
-          if (products.isEmpty) {
-            return const Center(child: Text('No products available'));
-          }
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(LocaleKeys.Filters.tr()),
+            ),
+            ListTile(
+              title: Text(LocaleKeys.SortBy.tr()),
+              trailing: DropdownButton<String>(
+                value: sortOption,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    sortOption = newValue!;
+                  });
+                  _applyFiltersAndSetState();
+                },
+                items:
+                    sortOptions.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            ListTile(
+              title: Text(LocaleKeys.MaxPrice.tr()),
+              subtitle: Slider(
+                value: maxPrice,
+                min: 1,
+                max: 50,
+                divisions: 50,
+                label: maxPrice.round().toString(),
+                onChanged: (double value) {
+                  setState(() {
+                    maxPrice = value;
+                  });
+                  _applyFiltersAndSetState();
+                },
+              ),
+            ),
+            ListTile(
+              title: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _applyFiltersAndSetState(); // Apply filters when 'Apply Filters' button is pressed
+                },
+                child: Text(LocaleKeys.ApplyFilters.tr()),
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: productsAsyncValue.when(
+              data: (products) {
+                if (products.isEmpty) {
+                  return Center(
+                      child: Text(LocaleKeys.NoProductsAvailable.tr()));
+                }
 
-          filteredProducts = _applyFilters(products);
+                filteredProducts = _applyFilters(products);
 
-          return Column(
-            children: [
-              SizedBox(height: 20.h), // 20 piksel mesafe
-              // Products Grid
-              Expanded(
-                child: GridView.builder(
+                return GridView.builder(
                   padding: EdgeInsets.all(10.w),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -87,25 +147,19 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     final product = filteredProducts[index];
                     return ProductItem(product: product);
                   },
-                ),
-              ),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   List _applyFilters(List products) {
     List filteredProducts = products.where((product) {
-      if (selectedCategory == 'Under \$10' && product.price >= 10) {
-        return false;
-      }
-      if (selectedCategory == 'Free' && product.price > 0) {
-        return false;
-      }
       if (product.price > maxPrice) {
         return false;
       }
@@ -113,99 +167,15 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     }).toList();
 
     filteredProducts.sort((a, b) {
-      switch (sortOption) {
-        case 'Price: Low to High':
-          return a.price.compareTo(b.price);
-        case 'Price: High to Low':
-          return b.price.compareTo(a.price);
-        case 'A to Z':
-          return a.name.compareTo(b.name);
-        case 'Z to A':
-          return b.name.compareTo(a.name);
-        default:
-          return 0;
+      if (sortOption == LocaleKeys.PriceLowToHigh.tr()) {
+        return a.price.compareTo(b.price);
+      } else if (sortOption == LocaleKeys.PriceHighToLow.tr()) {
+        return b.price.compareTo(a.price);
       }
+      return 0;
     });
 
     return filteredProducts;
-  }
-
-  void _showFilterMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: const Text('Sort by'),
-                  trailing: DropdownButton<String>(
-                    value: sortOption,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        sortOption = newValue!;
-                      });
-                      _applyFiltersAndSetState();
-                    },
-                    items: sortOptions
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Category'),
-                  trailing: DropdownButton<String>(
-                    value: selectedCategory,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedCategory = newValue!;
-                      });
-                      _applyFiltersAndSetState();
-                    },
-                    items: categories
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Max Price'),
-                  subtitle: Slider(
-                    value: maxPrice,
-                    min: 1,
-                    max: 1000,
-                    divisions: 100,
-                    label: maxPrice.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        maxPrice = value;
-                      });
-                      _applyFiltersAndSetState();
-                    },
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _applyFiltersAndSetState(); // Apply filters when 'Apply Filters' button is pressed
-                  },
-                  child: const Text('Apply Filters'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 
   void _applyFiltersAndSetState() {

@@ -1,7 +1,7 @@
 class Product {
   final String title;
   final String imageUrl;
-  final double price;
+  late final double price;
   final String description;  
   final String category;  
   int quantity;
@@ -12,7 +12,7 @@ class Product {
     required this.price,
     required this.description,
     required this.category,
-    this.quantity = 1,
+    this.quantity = 1, 
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class Product {
       price: double.parse(json['salePrice']),
       description: json['dealID'], 
       category: 'Games', 
-      quantity: 1,
+      quantity: 1, 
     );
   }
 
@@ -51,7 +51,7 @@ class Product {
       price: price ?? this.price,
       description: description ?? this.description,
       category: category ?? this.category,
-      quantity: quantity ?? this.quantity,
+      quantity: quantity ?? this.quantity, 
     );
   }
 }
