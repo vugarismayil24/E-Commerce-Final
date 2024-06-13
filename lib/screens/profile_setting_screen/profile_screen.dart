@@ -56,7 +56,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     if (user != null) {
       // Kullanıcıyı Firestore'dan sil
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .delete();
       // Firebase Authentication'dan kullanıcıyı sil
       await user.delete();
       // Oturum açma durumunu güncelle
@@ -78,7 +81,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Deletion'),
-          content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          content: const Text(
+              'Are you sure you want to delete your account? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -106,8 +110,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-
+        automaticallyImplyLeading: false,
         title: const Text("Profile"),
         centerTitle: true,
         actions: [

@@ -1,6 +1,5 @@
 import 'package:e_com_app/screens/order_screen/cart_screen.dart';
 import 'package:e_com_app/screens/payment_screen/payment_screen.dart';
-import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 
 import 'package:flutter/material.dart';
 
@@ -17,7 +16,7 @@ class DeliveryScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CartScreen(),));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CartScreen(),));
           },
         
         ),

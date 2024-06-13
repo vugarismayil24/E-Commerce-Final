@@ -182,7 +182,7 @@ class LoginScreenState extends State<LoginScreen> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        FaIcon(FontAwesomeIcons.google, color: Colors.red),
+                                        const FaIcon(FontAwesomeIcons.google, color: Colors.red),
                                         SizedBox(width: 10.w),
                                         Text(
                                           'GOOGLE',

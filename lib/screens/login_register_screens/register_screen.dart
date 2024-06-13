@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../widgets/bottom_navigation_bar_widget.dart';
 import 'login_screen.dart';
-import 'seller_register_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -16,7 +15,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class SignupPageState extends State<RegisterScreen> {
-  bool _acceptedTerms = true;
   late TextEditingController _fullNameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;

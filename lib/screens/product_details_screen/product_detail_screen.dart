@@ -53,9 +53,9 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         title: const Text("Details"),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BottomNavigationBarWidget(),));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget(),));
           },
         ),
       ),

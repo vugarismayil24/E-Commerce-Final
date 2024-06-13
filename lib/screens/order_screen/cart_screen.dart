@@ -6,7 +6,6 @@ import '../../providers/cart_provider.dart';
 import '../../widgets/quantity_control_widget.dart';
 import '../delivery_options_screen/delivery_options_screen.dart';
 import '../home_screen/home_screen.dart';
-import '../product_details_screen/product_detail_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -17,6 +16,7 @@ class CartScreen extends ConsumerStatefulWidget {
 
 class CartScreenState extends ConsumerState<CartScreen> {
   bool _isCouponApplied = false;
+  bool _isCouponValid = false;
   double _discountAmount = 0.0;
   late TextEditingController _couponController;
 
@@ -35,11 +35,13 @@ class CartScreenState extends ConsumerState<CartScreen> {
     if (_couponController.text == 'NEWUSER') {
       setState(() {
         _isCouponApplied = true;
-        _discountAmount = 50.0; // Example discount
+        _isCouponValid = true;
+        _discountAmount = 1.0; // Example discount
       });
     } else {
       setState(() {
-        _isCouponApplied = false;
+        _isCouponApplied = true;
+        _isCouponValid = false;
         _discountAmount = 0.0;
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -67,7 +69,8 @@ class CartScreenState extends ConsumerState<CartScreen> {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const DeliveryScreen(), // Navigate to DeliveryScreen
+                    builder: (context) =>
+                        const DeliveryScreen(), // Navigate to DeliveryScreen
                   ),
                 );
               },
@@ -110,8 +113,10 @@ class CartScreenState extends ConsumerState<CartScreen> {
   Widget build(BuildContext context) {
     final cartItems = ref.watch(cartProvider);
 
-    double totalPrice = cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
-    double taxesAndCharges = totalPrice * 0.05; // Example tax and charge calculation
+    double totalPrice =
+        cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+    double taxesAndCharges =
+        totalPrice * 0.05; // Example tax and charge calculation
     double finalTotal = totalPrice + taxesAndCharges - _discountAmount;
 
     return WillPopScope(
@@ -125,10 +130,8 @@ class CartScreenState extends ConsumerState<CartScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          
           title: const Text('Order details'),
-                    automaticallyImplyLeading: false,
-
+          automaticallyImplyLeading: false,
         ),
         body: cartItems.isEmpty
             ? const Center(
@@ -170,7 +173,8 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                   SizedBox(width: 10.w),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           product.title,
@@ -183,14 +187,15 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                         Row(
                                           children: [
                                             const Text('Customized'),
-                                            Icon(Icons.arrow_drop_down, size: 16.sp),
+                                            Icon(Icons.arrow_drop_down,
+                                                size: 16.sp),
                                           ],
                                         ),
                                         SizedBox(height: 4.h),
                                         Row(
                                           children: [
                                             QuantityControl(product: product),
-                                            Spacer(),
+                                            const Spacer(),
                                             Text(
                                               '${product.price * product.quantity} ₼',
                                               style: TextStyle(
@@ -206,7 +211,8 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete),
-                                    onPressed: () => _showRemoveDialog(context, ref, product),
+                                    onPressed: () => _showRemoveDialog(
+                                        context, ref, product),
                                   ),
                                 ],
                               ),
@@ -218,7 +224,8 @@ class CartScreenState extends ConsumerState<CartScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.h),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 16.w),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16.r),
@@ -236,19 +243,38 @@ class CartScreenState extends ConsumerState<CartScreen> {
                             GestureDetector(
                               onTap: _applyCoupon,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.card_giftcard, color: Colors.purple, size: 20.w),
+                                      Icon(Icons.card_giftcard,
+                                          color: Colors.purple, size: 20.w),
                                       SizedBox(width: 8.w),
                                       Text(
                                         'Apply Coupon',
-                                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
-                                  Icon(Icons.arrow_forward_ios, size: 16.sp),
+                                  Row(
+                                    children: [
+                                      if (_isCouponApplied)
+                                        Icon(
+                                          _isCouponValid
+                                              ? Icons.check_circle
+                                              : Icons.cancel,
+                                          color: _isCouponValid
+                                              ? Colors.green
+                                              : Colors.red,
+                                          size: 24.w,
+                                        ),
+                                      Icon(Icons.arrow_forward_ios,
+                                          size: 16.sp),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -269,11 +295,15 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   'Subtotal',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${totalPrice.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -283,11 +313,15 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   'Taxes and Charges',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${taxesAndCharges.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -297,11 +331,15 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   'Discount',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${_discountAmount.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -311,11 +349,15 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   'Total',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${finalTotal.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -331,20 +373,25 @@ class CartScreenState extends ConsumerState<CartScreen> {
                         children: [
                           Text(
                             '${finalTotal.toStringAsFixed(2)} ₼',
-                            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
                           ElevatedButton(
                             onPressed: () => _showCheckoutDialog(context, ref),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.yellow[700],
-                              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 32.w, vertical: 12.h),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                             ),
                             child: Text(
                               'MAKE PAYMENT',
-                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                           ),
                         ],

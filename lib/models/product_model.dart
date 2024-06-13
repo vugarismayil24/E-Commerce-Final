@@ -2,8 +2,8 @@ class Product {
   final String title;
   final String imageUrl;
   final double price;
-  final String description;  // Description field might not be directly available; you can set it to a default value or another appropriate field.
-  final String category;  // You might want to set this to a default value since CheapShark API might not provide categories.
+  final String description;  
+  final String category;  
   int quantity;
 
   Product({
@@ -20,10 +20,21 @@ class Product {
       title: json['title'],
       imageUrl: json['thumb'],
       price: double.parse(json['salePrice']),
-      description: json['dealID'], // This can be changed to another field or default value.
-      category: 'Games',  // This is a default value. You can change it if needed.
+      description: json['dealID'], 
+      category: 'Games', 
       quantity: 1,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'imageUrl': imageUrl,
+      'price': price,
+      'description': description,
+      'category': category,
+      'quantity': quantity,
+    };
   }
 
   Product copyWith({

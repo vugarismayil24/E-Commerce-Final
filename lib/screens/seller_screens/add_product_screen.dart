@@ -4,6 +4,8 @@ import '../../models/product_model.dart';
 import '../../providers/seller_provider.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
+  const AddProductScreen({super.key});
+
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
 }
@@ -46,7 +48,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ürün Ekle'),
+        title: const Text('Ürün Ekle'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -56,7 +58,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Ürün Başlığı'),
+                decoration: const InputDecoration(labelText: 'Ürün Başlığı'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen ürün başlığını giriniz';
@@ -66,7 +68,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               ),
               TextFormField(
                 controller: _imageUrlController,
-                decoration: InputDecoration(labelText: 'Ürün Resim URL'),
+                decoration: const InputDecoration(labelText: 'Ürün Resim URL'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen ürün resim URL\'sini giriniz';
@@ -76,7 +78,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               ),
               TextFormField(
                 controller: _priceController,
-                decoration: InputDecoration(labelText: 'Ürün Fiyatı'),
+                decoration: const InputDecoration(labelText: 'Ürün Fiyatı'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -90,7 +92,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Ürün Açıklaması'),
+                decoration: const InputDecoration(labelText: 'Ürün Açıklaması'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen ürün açıklamasını giriniz';
@@ -100,7 +102,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               ),
               TextFormField(
                 controller: _categoryController,
-                decoration: InputDecoration(labelText: 'Ürün Kategorisi'),
+                decoration: const InputDecoration(labelText: 'Ürün Kategorisi'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lütfen ürün kategorisini giriniz';
@@ -110,7 +112,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               ),
               TextFormField(
                 controller: _quantityController,
-                decoration: InputDecoration(labelText: 'Ürün Miktarı'),
+                decoration: const InputDecoration(labelText: 'Ürün Miktarı'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -122,10 +124,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addProduct,
-                child: Text('Ürün Ekle'),
+                child: const Text('Ürün Ekle'),
               ),
             ],
           ),

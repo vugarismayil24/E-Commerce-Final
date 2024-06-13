@@ -9,11 +9,19 @@ class OrderStatus {
 
 class OrderStatusScreen extends StatelessWidget {
   final List<OrderStatus> orderStatuses = [
-    OrderStatus(status: "Order Received", dateTime: DateTime.now().subtract(Duration(days: 3))),
-    OrderStatus(status: "Processing", dateTime: DateTime.now().subtract(Duration(days: 2))),
-    OrderStatus(status: "Shipped", dateTime: DateTime.now().subtract(Duration(days: 1))),
+    OrderStatus(
+        status: "Order Received",
+        dateTime: DateTime.now().subtract(const Duration(days: 3))),
+    OrderStatus(
+        status: "Processing",
+        dateTime: DateTime.now().subtract(const Duration(days: 2))),
+    OrderStatus(
+        status: "Shipped",
+        dateTime: DateTime.now().subtract(const Duration(days: 1))),
     OrderStatus(status: "Out for Delivery", dateTime: DateTime.now()),
   ];
+
+  OrderStatusScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

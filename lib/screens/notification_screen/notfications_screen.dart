@@ -1,4 +1,3 @@
-import 'package:e_com_app/screens/home_screen/home_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -46,12 +45,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notification'),
+        title: const Text('Notification'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => BottomNavigationBarWidget()));
+                context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()));
             // Geri düğmesine basıldığında yapılacaklar
           },
         ),
@@ -62,7 +61,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 notifications.clear();
               });
             },
-            child: Text(
+            child: const Text(
               'Supprime tous',
               style: TextStyle(color: Colors.black),
             ),
@@ -79,7 +78,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 notifications.removeAt(index);
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text('Notification dismissed'),
                 ),
               );
@@ -104,20 +103,20 @@ class NotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: notification.color,
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               notification.text,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               notification.date,
-              style: TextStyle(color: Colors.black54),
+              style: const TextStyle(color: Colors.black54),
             ),
           ],
         ),
