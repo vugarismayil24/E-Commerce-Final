@@ -36,6 +36,7 @@ abstract class  LocaleKeys {
   static const ProfileUpdatedSuccessfully = 'ProfileUpdatedSuccessfully';
   static const FailedToUpdateProfile = 'FailedToUpdateProfile';
   static const Confirm = 'Confirm';
+  static const Cancel = 'Cancel';
   static const PleaseEnter = 'PleaseEnter';
   static const NoFavoriteItem = 'NoFavoriteItem';
   static const PasswordResetEmailSent = 'PasswordResetEmailSent';
@@ -48,5 +49,19 @@ abstract class  LocaleKeys {
   static const SignIn = 'SignIn';
   static const SignUp = 'SignUp';
   static const Name = 'Name';
+  static const OrderDetails = 'OrderDetails';
+  static const ApplyCoupon = 'ApplyCoupon';
+  static const EnterCouponCode = 'EnterCouponCode';
+  static const SubTotal = 'SubTotal';
+  static const TaxedAndCharges = 'TaxedAndCharges';
+  static const MakePayment = 'MakePayment';
+  static const InvalidCouponCode = 'InvalidCouponCode';
+  static const Checkout = 'Checkout';
+  static const AreYouSureYouWantToCheckout = 'AreYouSureYouWantToCheckout';
+  static const RemoveItem = 'RemoveItem';
+  static const AreYouSureYouWantToRemoveThisItem = 'AreYouSureYouWantToRemoveThisItem';
+  static const YourCartIsEmpty = 'YourCartIsEmpty';
+  static const Total = 'Total';
+  static const Discount = 'Discount';
 
 }

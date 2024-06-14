@@ -191,7 +191,7 @@ class LoginScreenState extends State<LoginScreen> {
                                     ),
                                     child: InkWell(
                                       onTap: () async {
-                                        AuthService().signInWithGoole();
+                                        AuthService().signInWithGoogle();
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(

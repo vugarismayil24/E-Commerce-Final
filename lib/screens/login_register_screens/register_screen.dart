@@ -177,7 +177,7 @@ class SignupPageState extends State<RegisterScreen> {
                                     ),
                                     child: InkWell(
                                       onTap: () async{
-                                        AuthService().signInWithGoole();
+                                        AuthService().signInWithGoogle();
                                         Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget(),));
                                       },
                                       child: Row(

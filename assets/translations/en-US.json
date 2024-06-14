@@ -34,6 +34,7 @@
     "ProfileUpdatedSuccessfully":"Profile updated successfully",
     "FailedToUpdateProfile":"Failed to update profile",
     "Confirm":"Confirm",
+    "Cancel":"Cancel",
     "PleaseEnter":"Please enter",
     "NoFavoriteItem":"No favorite item",
     "PasswordResetEmailSent":"Password reset email sent",
@@ -45,5 +46,19 @@
     "Login":"Log In",
     "SignIn":"Sign In",
     "SignUp":"Sign Up",
-    "Name":"Name"
+    "Name":"Name",
+    "OrderDetails":"Order Details",
+    "ApplyCoupon":"Apply Coupon",
+    "EnterCouponCode":"Enter coupon code",
+    "SubTotal":"SubTotal",
+    "TaxedAndCharges":"Taxed and charges",
+    "MakePayment":"Make Payment",
+    "InvalidCouponCode":"Invalid coupon code",
+    "Checkout":"Checkout",
+    "AreYouSureYouWantToCheckout":"Are you sure you want to checkout?",
+    "RemoveItem": "Remove Item",
+    "AreYouSureYouWantToRemoveThisItem":"Are you sure you want to remove this item?",
+    "YourCartIsEmpty":"Your cart is empty",
+    "Total":"Total",
+    "Discount":"Discount"
 }

@@ -1,8 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/quantity_control_widget.dart';
@@ -30,7 +33,12 @@ class CartScreenState extends ConsumerState<CartScreen> {
   }
 
   Future<void> _loadCart() async {
-    await ref.read(cartProvider.notifier).loadCart();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await ref.read(cartProvider.notifier).loadCart();
+    } else {
+      // Kullanıcı giriş yapmamışsa burada giriş ekranına yönlendirebilirsiniz.
+    }
   }
 
   void _applyCoupon() {
@@ -38,7 +46,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
       setState(() {
         _isCouponApplied = true;
         _isCouponValid = true;
-        _discountAmount = 1.0; // Example discount
+        _discountAmount = 1.0; 
       });
     } else {
       setState(() {
@@ -47,7 +55,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
         _discountAmount = 0.0;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid coupon code')),
+         SnackBar(content: Text(LocaleKeys.InvalidCouponCode.tr(),)),
       );
     }
   }
@@ -57,14 +65,14 @@ class CartScreenState extends ConsumerState<CartScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Checkout'),
-          content: const Text('Are you sure you want to checkout?'),
+          title:  Text(LocaleKeys.Checkout.tr(),),
+          content:  Text(LocaleKeys.AreYouSureYouWantToCheckout.tr(),),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child:  Text(LocaleKeys.Cancel.tr()),
             ),
             TextButton(
               onPressed: () {
@@ -72,11 +80,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        const DeliveryScreen(), // Navigate to DeliveryScreen
+                        const DeliveryScreen(),
                   ),
                 );
               },
-              child: const Text('Confirm'),
+              child:  Text(LocaleKeys.Confirm.tr()),
             ),
           ],
         );
@@ -89,21 +97,21 @@ class CartScreenState extends ConsumerState<CartScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Remove Item'),
-          content: const Text('Are you sure you want to remove this item?'),
+          title:  Text(LocaleKeys.RemoveItem.tr(),),
+          content:  Text(LocaleKeys.AreYouSureYouWantToRemoveThisItem.tr(),),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child:  Text(LocaleKeys.Cancel.tr()),
             ),
             TextButton(
               onPressed: () {
                 ref.read(cartProvider.notifier).removeFromCart(product);
                 Navigator.of(context).pop();
               },
-              child: const Text('Confirm'),
+              child:  Text(LocaleKeys.Confirm.tr()),
             ),
           ],
         );
@@ -118,7 +126,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
     double totalPrice =
         cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
     double taxesAndCharges =
-        totalPrice * 0.05; // Example tax and charge calculation
+        totalPrice * 0.05; 
     double finalTotal = totalPrice + taxesAndCharges - _discountAmount;
 
     return WillPopScope(
@@ -132,13 +140,13 @@ class CartScreenState extends ConsumerState<CartScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Order details'),
+          title:  Text(LocaleKeys.OrderDetails.tr()),
           automaticallyImplyLeading: false,
         ),
         body: cartItems.isEmpty
-            ? const Center(
+            ?  Center(
                 child: Text(
-                  'Your cart is empty',
+                  LocaleKeys.YourCartIsEmpty.tr(),
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.red,
@@ -184,14 +192,6 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
-                                        ),
-                                        SizedBox(height: 4.h),
-                                        Row(
-                                          children: [
-                                            const Text('Customized'),
-                                            Icon(Icons.arrow_drop_down,
-                                                size: 16.sp),
-                                          ],
                                         ),
                                         SizedBox(height: 4.h),
                                         Row(
@@ -254,7 +254,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                           color: Colors.purple, size: 20.w),
                                       SizedBox(width: 8.w),
                                       Text(
-                                        'Apply Coupon',
+                                       LocaleKeys.ApplyCoupon.tr(),
                                         style: TextStyle(
                                             fontSize: 16.sp,
                                             fontWeight: FontWeight.bold),
@@ -285,7 +285,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               TextField(
                                 controller: _couponController,
                                 decoration: InputDecoration(
-                                  hintText: 'Enter coupon code',
+                                  hintText: LocaleKeys.EnterCouponCode.tr(),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
@@ -296,7 +296,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Subtotal',
+                                  LocaleKeys.SubTotal.tr(),
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -314,7 +314,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Taxes and Charges',
+                                  LocaleKeys.TaxedAndCharges.tr(),
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -332,7 +332,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Discount',
+                                  LocaleKeys.Discount.tr(),
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -350,7 +350,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Total',
+                                  LocaleKeys.Total.tr(),
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -389,7 +389,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               ),
                             ),
                             child: Text(
-                              'MAKE PAYMENT',
+                              LocaleKeys.MakePayment.tr(),
                               style: TextStyle(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold,

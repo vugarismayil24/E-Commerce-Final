@@ -31,6 +31,7 @@ class AuthService {
         // Oturum açma durumunu kaydet
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('loginMethod', 'email');
       }
 
       return user;
@@ -51,6 +52,7 @@ class AuthService {
       // Oturum açma durumunu kaydet
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('loginMethod', 'email');
 
       return userCredential.user;
     } on FirebaseAuthException catch (e) {
@@ -65,6 +67,7 @@ class AuthService {
     await _firebaseAuth.signOut();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('loginMethod');
   }
 
   Future<void> resetPassword(String email) async {
@@ -81,14 +84,35 @@ class AuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('isLoggedIn') ?? false;
   }
-  Future<User?> signInWithGoole() async{
+
+  Future<User?> signInWithGoogle() async {
     final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication gAuth = await gUser!.authentication;
-    final credential = GoogleAuthProvider.credential(accessToken: gAuth.accessToken,idToken: gAuth.idToken);
+    final credential = GoogleAuthProvider.credential(
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
+    );
     final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+    // Oturum açma durumunu kaydet
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('loginMethod', 'google');
+
     return userCredential.user;
-    // if (userCredential != null) {
-    //   return
-    // }
+  }
+
+  Future<void> autoLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    String? loginMethod = prefs.getString('loginMethod');
+
+    if (isLoggedIn && loginMethod != null) {
+      if (loginMethod == 'google') {
+        await signInWithGoogle();
+      } else if (loginMethod == 'email') {
+        // Email ve şifre ile giriş yapıldıysa, zaten kullanıcı oturum açmış durumda olacak
+      }
+    }
   }
 }

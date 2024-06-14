@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/product_model.dart';
 
@@ -55,16 +57,34 @@ class CartNotifier extends StateNotifier<List<Product>> {
   void decrementQuantity(Product product) => updateQuantity(product, -1);
 
   Future<void> loadCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartString = prefs.getString('cart') ?? '[]';
-    final List<dynamic> cartJson = jsonDecode(cartString);
-    state = cartJson.map((json) => Product.fromJson(json)).toList();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final cartRef = FirebaseFirestore.instance.collection('carts').doc(user.email);
+      final cartDoc = await cartRef.get();
+      if (cartDoc.exists) {
+        final List<dynamic> cartJson = cartDoc.data()?['items'] ?? [];
+        state = cartJson.map((json) => Product.fromJson(json)).toList();
+      }
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      final cartString = prefs.getString('cart') ?? '[]';
+      final List<dynamic> cartJson = jsonDecode(cartString);
+      state = cartJson.map((json) => Product.fromJson(json)).toList();
+    }
   }
 
   Future<void> saveCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartString = jsonEncode(state.map((product) => product.toJson()).toList());
-    await prefs.setString('cart', cartString);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final cartRef = FirebaseFirestore.instance.collection('carts').doc(user.email);
+      await cartRef.set({
+        'items': state.map((product) => product.toJson()).toList(),
+      });
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      final cartString = jsonEncode(state.map((product) => product.toJson()).toList());
+      await prefs.setString('cart', cartString);
+    }
   }
 }
 
