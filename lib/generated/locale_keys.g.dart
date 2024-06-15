@@ -65,5 +65,12 @@ abstract class  LocaleKeys {
   static const YourCartIsEmpty = 'YourCartIsEmpty';
   static const Total = 'Total';
   static const Discount = 'Discount';
+  static const WhatsNew = 'WhatsNew';
+  static const FeaturedGame = 'FeaturedGame';
+  static const PopularGames = 'PopularGames';
+  static const Recommended = 'Recommended';
+  static const ComingSoon = 'ComingSoon';
+  static const Genres = 'Genres';
+  static const DiscountedGames = 'DiscountedGames';
 
 }

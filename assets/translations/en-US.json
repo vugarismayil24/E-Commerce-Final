@@ -60,5 +60,12 @@
     "AreYouSureYouWantToRemoveThisItem":"Are you sure you want to remove this item?",
     "YourCartIsEmpty":"Your cart is empty",
     "Total":"Total",
-    "Discount":"Discount"
+    "Discount":"Discount",
+    "WhatsNew":"WhatsNew",
+    "FeaturedGame":"FeaturedGame",
+    "PopularGames":"PopularGames",
+    "Recommended":"Recommended",
+    "ComingSoon":"ComingSoon",
+    "Genres":"Genres",
+    "DiscountedGames":"DiscountedGames"
 }

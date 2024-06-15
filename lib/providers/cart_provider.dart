@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -65,22 +64,16 @@ class CartNotifier extends StateNotifier<List<Product>> {
       if (cartDoc.exists) {
         final List<dynamic> cartJson = cartDoc.data()?['items'] ?? [];
         state = cartJson.map((json) => Product.fromJson(json)).toList();
-        if (kDebugMode) {
-          print("Loaded cart from Firestore: $state");
-        }
+        print("Loaded cart from Firestore: $state");
       } else {
-        if (kDebugMode) {
-          print("No cart data found in Firestore for user: ${user.email}");
-        }
+        print("No cart data found in Firestore for user: ${user.email}");
       }
     } else {
       final prefs = await SharedPreferences.getInstance();
       final cartString = prefs.getString('cart') ?? '[]';
       final List<dynamic> cartJson = jsonDecode(cartString);
       state = cartJson.map((json) => Product.fromJson(json)).toList();
-      if (kDebugMode) {
-        print("Loaded cart from SharedPreferences: $state");
-      }
+      print("Loaded cart from SharedPreferences: $state");
     }
   }
 

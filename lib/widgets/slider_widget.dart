@@ -87,7 +87,7 @@ class SliderWidget extends StatelessWidget {
               itemCount: searchResults.length,
               itemBuilder: (context, index) {
                 final product = searchResults[index];
-                return ProductItem(product: product);
+                return ProductItem(product: product, isFeatured: false,);
               },
             ),
           if (searchResults.isEmpty)

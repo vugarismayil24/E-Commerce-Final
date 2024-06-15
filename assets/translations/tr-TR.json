@@ -60,5 +60,12 @@
     "AreYouSureYouWantToRemoveThisItem": "Bu maddəni silmək istədiyinizdən əminsiniz?",
     "YourCartIsEmpty": "Səbətiniz boşdur",
     "Total": "Cəmi",
-    "Discount": "Endirim"
+    "Discount": "Endirim",
+    "WhatsNew":"WhatsNew",
+    "FeaturedGame":"FeaturedGame",
+    "PopularGames":"PopularGames",
+    "Recommended":"Recommended",
+    "ComingSoon":"ComingSoon",
+    "Genres":"Genres",
+    "DiscountedGames":"DiscountedGames"
 }
