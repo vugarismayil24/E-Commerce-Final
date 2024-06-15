@@ -45,9 +45,9 @@ class ProductItem extends ConsumerWidget {
                 image: DecorationImage(
                   image: NetworkImage(
                     product.imageUrl,
-                    scale: 1,
                   ),
                   fit: BoxFit.contain,
+                  onError: (error, stackTrace) => const NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNHWvM0Gud_EyYvZwsOVyg2w0AFNqeMEJiBQ&s'),
                 ),
               ),
             ),

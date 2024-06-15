@@ -34,7 +34,7 @@ class BottomNavigationBarWidgetState
 
     switch (_selectedIndex) {
       case 0:
-        return const HomeScreen();
+        return  const HomeScreen();
       case 1:
         return const SearchScreen();
       case 2:
@@ -50,7 +50,7 @@ class BottomNavigationBarWidgetState
       case 7:
         return const LoginScreen();
       default:
-        return const HomeScreen();
+        return  const HomeScreen();
     }
   }
 

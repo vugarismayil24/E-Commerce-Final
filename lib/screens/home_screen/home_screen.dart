@@ -150,7 +150,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
+              error: (error, stack) => Center(child: Text('Xetan burdadi: $error')),
             ),
           ),
         ],

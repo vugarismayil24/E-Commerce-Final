@@ -46,7 +46,7 @@ if (keystorePropertiesFile.exists()) {
     }
 
     sourceSets {
-        main.java.srcDirs = 'src/main/kotlin'
+        main.java.srcDirs += file('src/main/kotlin')
     }
 
     defaultConfig {

@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
@@ -33,12 +32,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
   }
 
   Future<void> _loadCart() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await ref.read(cartProvider.notifier).loadCart();
-    } else {
-      // Kullanıcı giriş yapmamışsa burada giriş ekranına yönlendirebilirsiniz.
-    }
+    await ref.read(cartProvider.notifier).loadCart();
   }
 
   void _applyCoupon() {
@@ -133,7 +127,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
       onWillPop: () async {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) =>  const HomeScreen()),
         );
         return false;
       },
@@ -147,7 +141,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
             ?  Center(
                 child: Text(
                   LocaleKeys.YourCartIsEmpty.tr(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     color: Colors.red,
                   ),
