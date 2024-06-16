@@ -54,8 +54,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -65,14 +63,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       onWillPop: () async {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+          MaterialPageRoute(
+              builder: (context) => const BottomNavigationBarWidget()),
         );
         return false;
       },
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title:  Text(LocaleKeys.Profile.tr()),
+          title: Text(LocaleKeys.Profile.tr()),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+              );
+            },
+          ),
           centerTitle: true,
           actions: [
             IconButton(

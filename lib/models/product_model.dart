@@ -12,7 +12,7 @@ class Product {
     required this.price,
     required this.description,
     required this.category,
-    this.quantity = 1, 
+    this.quantity = 1,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -27,6 +27,28 @@ class Product {
   }
 
   Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'imageUrl': imageUrl,
+      'price': price,
+      'description': description,
+      'category': category,
+      'quantity': quantity,
+    };
+  }
+
+  factory Product.fromMap(Map<String, dynamic> map, String documentId) {
+    return Product(
+      title: map['title'],
+      imageUrl: map['imageUrl'],
+      price: map['price'],
+      description: map['description'],
+      category: map['category'],
+      quantity: map['quantity'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
     return {
       'title': title,
       'imageUrl': imageUrl,

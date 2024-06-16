@@ -100,10 +100,11 @@ class ProductItem extends ConsumerWidget {
                     );
                   },
                   child: Container(
-                    width: 100.w,
-                    height: 30.h,
+                    margin: REdgeInsets.only(top: 40.5),
+                    width: 150.w,
+                    height: 40.h,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       color: Colors.green,
                     ),
                     child: Icon(
