@@ -1,12 +1,73 @@
-// ignore_for_file: deprecated_member_use
-
-import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/favorites_provider.dart';
+import '../../widgets/bottom_navigation_bar_widget.dart';
+
+List<String> gameGenres = [
+  'Aksiyon', 'Macera', 'Rol Yapma', 'Strateji', 'Simülasyon', 'Yarış', 'Spor', 'Korku'
+];
+
+List<String> gameFeatures = [
+  'çok oyunculu', 'açık dünya', 'hikaye odaklı', 'grafiksel olarak zengin', 'bağımlılık yapan', 'yenilikçi oyun mekanikleri'
+];
+
+List<String> gameObjectives = [
+  'düşmanları alt etmek', 'bulmacaları çözmek', 'dünyayı kurtarmak', 'yeni bölgeleri keşfetmek', 'takımınızı yönetmek', 'yarışları kazanmak'
+];
+
+String generateRandomGameDescription() {
+  final genre = gameGenres[Random().nextInt(gameGenres.length)];
+  final feature = gameFeatures[Random().nextInt(gameFeatures.length)];
+  final objective = gameObjectives[Random().nextInt(gameObjectives.length)];
+
+  return "Bu $genre oyununda, $feature oyun mekanikleri ile $objective amacına ulaşmanız gerekiyor.";
+}
+
+// Rastgele kullanıcı isimleri ve yorumları oluşturmak için yardımcı işlevler
+List<String> generateRandomNames(int count) {
+  final names = [
+    'Ahmet', 'Mehmet', 'Ayşe', 'Fatma', 'Ali', 'Veli', 'Osman', 'Hüseyin', 'Yusuf', 'Zeynep'
+  ];
+  return List<String>.generate(count, (_) => names[Random().nextInt(names.length)]);
+}
+
+List<String> generateRandomComments(int count, double rating) {
+  final goodComments = [
+    'Harika!', 'Çok iyi', 'Beğendim', 'Mükemmel!', 'Kesinlikle öneririm', 'Bir daha alırım'
+  ];
+  final badComments = [
+    'İdare eder', 'Kötü', 'Memnun kalmadım', 'Hayal kırıklığı', 'Berbat', 'Asla önermem'
+  ];
+  
+  return List<String>.generate(
+    count, 
+    (_) => rating > 2.5 
+      ? goodComments[Random().nextInt(goodComments.length)] 
+      : badComments[Random().nextInt(badComments.length)]
+  );
+}
+
+double generateRandomRating() {
+  return Random().nextDouble() * 5;
+}
+
+int generateStarRating(double rating) {
+  if (rating > 4.5) {
+    return 5;
+  } else if (rating > 3.5) {
+    return 4;
+  } else if (rating > 2.5) {
+    return 3;
+  } else if (rating > 1.5) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
 
 class ProductDetailScreen extends ConsumerStatefulWidget {
   final Product product;
@@ -35,9 +96,7 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   }
 
   void _addToCart() {
-    ref
-        .read(cartProvider.notifier)
-        .addToCart(widget.product, quantity: quantity);
+    ref.read(cartProvider.notifier).addToCart(widget.product, quantity: quantity);
   }
 
   void _toggleFavorite() {
@@ -63,6 +122,13 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final isFavorite = ref.watch(favoritesProvider).contains(widget.product);
 
+    // Rastgele rating, yorum sayısı ve yorumlar oluşturma
+    final randomRating = generateRandomRating();
+    final commentCount = Random().nextInt(13) + 3; // 3 ile 15 arasında yorum
+    final randomNames = generateRandomNames(commentCount);
+    final randomComments = generateRandomComments(commentCount, randomRating);
+    final starRating = generateStarRating(randomRating);
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -74,8 +140,7 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const BottomNavigationBarWidget()),
+                MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
               );
             },
           ),
@@ -105,24 +170,27 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.product.title.substring(0, 9),
+                            widget.product.title.padRight(1),
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Text(
                             ' ${widget.product.price} AZN',
                             style: const TextStyle(
-                                fontSize: 20,
-                                color: Color(0xFFE22323),
-                                fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              color: Color(0xFFE22323),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                       SizedBox(height: 10),
                       Text(
-                        widget.product.title,
-                        style: const TextStyle(fontSize: 14),
+                        generateRandomGameDescription(),
+                        style:  TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 30),
                       Row(
@@ -165,7 +233,9 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                             onTap: _addToCart,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 12),
+                                horizontal: 30,
+                                vertical: 12,
+                              ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: const Color(0xff2A9D8F),
@@ -173,44 +243,65 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                               child: const Text(
                                 "Add to cart",
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 22),
+                      const SizedBox(height: 20),
+                      // Rating ve yorum sayısını ekleme
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Description',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: const Color(0xff264653),
-                            ),
-                            child: IconButton(
-                              icon: Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: Colors.white,
+                          Row(
+                            children: [
+                              ...List.generate(
+                                starRating,
+                                (index) => const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                ),
                               ),
-                              onPressed: _toggleFavorite,
+                              ...List.generate(
+                                5 - starRating,
+                                (index) => const Icon(
+                                  Icons.star_border,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                              Text(
+                                randomRating.toStringAsFixed(1),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            '$commentCount yorum',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Soin avec rinçage renforçant la fibre capillaire et apportant volume et densité aux cheveux les plus fins. Les cheveux paraissent plus denses et sont hydratés.\n\ncontenance : 200ml',
-                        style: TextStyle(fontSize: 16),
+                      const SizedBox(height: 20),
+                      // Yorumları ekleme
+                      Column(
+                        children: List.generate(commentCount, (index) {
+                          return ListTile(
+                            leading: CircleAvatar(
+                              child: Text(randomNames[index][0]),
+                            ),
+                            title: Text(randomNames[index]),
+                            subtitle: Text(randomComments[index]),
+                          );
+                        }),
                       ),
                     ],
                   ),
@@ -223,3 +314,4 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     );
   }
 }
+

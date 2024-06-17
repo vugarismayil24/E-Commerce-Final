@@ -16,7 +16,7 @@ class CartNotifier extends StateNotifier<List<Product>> {
   void addToCart(Product product, {int quantity = 1}) {
     final existingProduct = state.firstWhere(
       (item) => item.title == product.title,
-      orElse: () => Product(title: '', imageUrl: '', price: 0, quantity: 0, description: '', category: ''),
+      orElse: () => Product(title: '', imageUrl: '', price: 0, quantity: 0, description: '', category: '', gameID: '', id: ''),
     );
 
     if (existingProduct.title.isNotEmpty) {
