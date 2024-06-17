@@ -1,23 +1,22 @@
-import 'package:e_com_app/screens/login_screen.dart';
-import 'package:e_com_app/screens/register_screen.dart';
+import 'package:e_com_app/generated/locale_keys.g.dart';
+import 'package:e_com_app/screens/login_register_screens/login_screen.dart';
+import 'package:e_com_app/screens/login_register_screens/register_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../screens/home_screen.dart';
-import '../screens/cart_screen.dart';
-import '../screens/favorites_screen.dart';
-import '../screens/search_screen.dart';
-import '../screens/profile_screen.dart';
+import '../screens/home_screen/home_screen.dart';
+import '../screens/order_screen/cart_screen.dart';
+import '../screens/favorites_screen/favorites_screen.dart';
+import '../screens/search_screen/search_screen.dart';
 
 class BottomNavigationBarWidget extends ConsumerStatefulWidget {
   const BottomNavigationBarWidget({super.key});
 
   @override
-  BottomNavigationBarWidgetState createState() =>
-      BottomNavigationBarWidgetState();
+  BottomNavigationBarWidgetState createState() => BottomNavigationBarWidgetState();
 }
 
-class BottomNavigationBarWidgetState
-    extends ConsumerState<BottomNavigationBarWidget> {
+class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWidget> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -37,10 +36,8 @@ class BottomNavigationBarWidgetState
       case 3:
         return const CartScreen();
       case 4:
-        return const ProfileScreen();
-      case 5:
         return const RegisterScreen();
-      case 6:
+      case 5:
         return const LoginScreen();
       default:
         return const HomeScreen();
@@ -51,33 +48,51 @@ class BottomNavigationBarWidgetState
   Widget build(BuildContext context) {
     return Scaffold(
       body: _getSelectedWidget(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        clipBehavior: Clip.none,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 120,
+              spreadRadius: 5,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+          child: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.home),
+                label: LocaleKeys.Home.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.search),
+                label: LocaleKeys.Search.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.favorite),
+                label: LocaleKeys.Favorites.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.shopping_cart),
+                label: LocaleKeys.Cart.tr(),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: const Color(0xFF2A9D8F),
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: false,
+            onTap: _onItemTapped,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF2A9D8F),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+        ),
       ),
     );
   }

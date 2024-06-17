@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../models/product.dart';
-import '../screens/product_detail_screen.dart';
+import '../models/product_model.dart';
+import '../screens/product_details_screen/product_detail_screen.dart';
 import 'product_item_widget.dart';
 
 class SliderWidget extends StatelessWidget {
@@ -87,7 +87,7 @@ class SliderWidget extends StatelessWidget {
               itemCount: searchResults.length,
               itemBuilder: (context, index) {
                 final product = searchResults[index];
-                return ProductItem(product: product);
+                return ProductItem(product: product, isFeatured: false,);
               },
             ),
           if (searchResults.isEmpty)

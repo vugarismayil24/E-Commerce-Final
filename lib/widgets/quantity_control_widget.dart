@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/product.dart';
+import '../models/product_model.dart';
 import '../providers/cart_provider.dart';
 
 class QuantityControl extends ConsumerStatefulWidget {
