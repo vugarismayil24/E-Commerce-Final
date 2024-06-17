@@ -48,29 +48,51 @@ class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWi
   Widget build(BuildContext context) {
     return Scaffold(
       body: _getSelectedWidget(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: LocaleKeys.Home.tr(),
+      bottomNavigationBar: Container(
+        clipBehavior: Clip.none,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 120,
+              spreadRadius: 5,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.search),
-            label: LocaleKeys.Search.tr(),
+          child: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.home),
+                label: LocaleKeys.Home.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.search),
+                label: LocaleKeys.Search.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.favorite),
+                label: LocaleKeys.Favorites.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.shopping_cart),
+                label: LocaleKeys.Cart.tr(),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: const Color(0xFF2A9D8F),
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: false,
+            onTap: _onItemTapped,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.white,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.favorite),
-            label: LocaleKeys.Favorites.tr(),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.shopping_cart),
-            label: LocaleKeys.Cart.tr(),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF2A9D8F),
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+        ),
       ),
     );
   }

@@ -1,13 +1,10 @@
-// ignore_for_file: deprecated_member_use
-
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../generated/locale_keys.g.dart';
+import '../../models/product_model.dart';
 import '../../providers/products_provider.dart';
 import '../../widgets/bottom_navigation_bar_widget.dart';
-import '../../widgets/slider_widget.dart'; // SliderWidget'i SliderOptionsWidget olarak değiştirdik
+import '../../widgets/slider_widget.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -19,6 +16,9 @@ class SearchScreen extends ConsumerStatefulWidget {
 class SearchScreenState extends ConsumerState<SearchScreen> {
   late TextEditingController _searchController;
   String _searchQuery = '';
+  String _selectedFilter = 'Ucuzdan Pahalıya';
+  double? _minPrice;
+  double? _maxPrice;
 
   @override
   void initState() {
@@ -30,6 +30,87 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _showFilterDialog() {
+    TextEditingController minPriceController = TextEditingController();
+    TextEditingController maxPriceController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(20.h),
+          height: 300.h,
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: const Text('Ucuzdan Pahalıya'),
+                onTap: () {
+                  setState(() {
+                    _selectedFilter = 'Ucuzdan Pahalıya';
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text('Pahalıdan Ucuza'),
+                onTap: () {
+                  setState(() {
+                    _selectedFilter = 'Pahalıdan Ucuza';
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              TextField(
+                controller: minPriceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Minimum Fiyat',
+                ),
+              ),
+              TextField(
+                controller: maxPriceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Maksimum Fiyat',
+                ),
+              ),
+              ElevatedButton(
+                child: const Text('Uygula'),
+                onPressed: () {
+                  setState(() {
+                    _minPrice = double.tryParse(minPriceController.text);
+                    _maxPrice = double.tryParse(maxPriceController.text);
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  List<Product> _filterProducts(List<Product> products) {
+    List<Product> filteredProducts = products;
+
+    if (_selectedFilter == 'Ucuzdan Pahalıya') {
+      filteredProducts.sort((a, b) => a.price.compareTo(b.price));
+    } else {
+      filteredProducts.sort((a, b) => b.price.compareTo(a.price));
+    }
+
+    if (_minPrice != null) {
+      filteredProducts = filteredProducts.where((product) => product.price >= _minPrice!).toList();
+    }
+
+    if (_maxPrice != null) {
+      filteredProducts = filteredProducts.where((product) => product.price <= _maxPrice!).toList();
+    }
+
+    return filteredProducts;
   }
 
   @override
@@ -60,7 +141,7 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: LocaleKeys.SearchBarText.tr(),// bura deyisecek
+                    hintText: 'Search...',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(50.r)),
                     ),
@@ -77,18 +158,23 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
                 ),
               ),
               centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: _showFilterDialog,
+                ),
+              ],
             ),
             body: productsAsyncValue.when(
               data: (products) {
-                final searchResults = products
+                List<Product> filteredProducts = _filterProducts(products);
+
+                final searchResults = filteredProducts
                     .where((product) => product.title.toLowerCase().contains(_searchQuery))
                     .toList();
 
-                final discountProducts = products.where((product) => product.price < 50).toList()
-                  ..sort((a, b) => a.price.compareTo(b.price));
-
                 return SliderWidget(
-                  discountProducts: discountProducts,
+                  discountProducts: filteredProducts,
                   searchResults: searchResults,
                 );
               },

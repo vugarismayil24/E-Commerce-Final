@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/bottom_navigation_bar_widget.dart';
 import '../../widgets/quantity_control_widget.dart';
 import '../delivery_options_screen/delivery_options_screen.dart';
-import '../home_screen/home_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -125,9 +123,9 @@ class CartScreenState extends ConsumerState<CartScreen> {
 
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) =>  const HomeScreen()),
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+          (Route<dynamic> route) => false,
         );
         return false;
       },
