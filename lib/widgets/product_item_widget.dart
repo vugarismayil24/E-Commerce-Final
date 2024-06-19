@@ -137,13 +137,14 @@ class ProductItem extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    
                     product.title,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 5.h),
@@ -231,9 +232,8 @@ class ProductItem extends ConsumerWidget {
                   );
                 },
                 child: Container(
-                  margin: EdgeInsets.all(8.w),
                   width: double.infinity,
-                  height: 40.h,
+                  height: 37.h,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.green,

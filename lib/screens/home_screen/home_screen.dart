@@ -1,14 +1,11 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../generated/locale_keys.g.dart';
+import '../../models/product_model.dart';
 import '../../providers/products_provider.dart';
 import '../../widgets/product_item_widget.dart';
-import '../category_products_screen/category_products_screen.dart';
-import '../discount_screen/discount_screen.dart';
-import '../profile_setting_screen/profile_screen.dart';
+import '../product_list_screen/product_list_screen.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,12 +16,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class HomeScreenState extends ConsumerState<HomeScreen> {
   final Map<String, bool> sectionLastItemVisible = {
-    'whatsNew': false,
-    'featured': false,
-    'popular': false,
-    'recommended': false,
-    'comingSoon': false,
-    'discounted': false,
+    'dealOfTheDay': false,
+    'hotSellingFootwear': false,
+    'recommendedForYou': false,
   };
 
   @override
@@ -35,144 +29,184 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("MCOM STORE"),
+        title: const Text("MCOM STORE"),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildImageSlider(),
-            _buildMinOffBanner(),
-            _buildSectionTitle('Deal of the day'),
-            _buildProductListSection(productsAsyncValue, 'dealOfTheDay'),
-            _buildSectionTitle('Hot Selling Footwear'),
-            _buildProductListSection(productsAsyncValue, 'hotSellingFootwear'),
-            _buildSectionTitle('Recommended for you'),
-            _buildProductListSection(productsAsyncValue, 'recommendedForYou'),
+            SizedBox(height: 10,),
+            _buildCategoryCarousel(productsAsyncValue),
+            
+            
+            _buildInfoSection(),
+            _buildSectionTitle('Deal of the day', 'dealOfTheDay', productsAsyncValue),
+            _buildProductCarousel(productsAsyncValue, 'dealOfTheDay'),
+            _buildSectionTitle('Hot Selling Footwear', 'hotSellingFootwear', productsAsyncValue),
+            _buildProductCarousel(productsAsyncValue, 'hotSellingFootwear'),
+            _buildSectionTitle('Recommended for you', 'recommendedForYou', productsAsyncValue),
+            _buildProductCarousel(productsAsyncValue, 'recommendedForYou'),
           ],
         ),
       ),
     );
   }
 
-  
-
-  Widget _buildCategoryRow() {
-  final categories = [
-    {'name': 'PC', 'icon': Icons.laptop},
-    {'name': 'Xbox', 'icon': Icons.tablet},
-    {'name': 'Nintendo', 'icon': Icons.nature_sharp},
-  ];
-
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 10.h),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: categories.map((category) {
-        return Column(
-          children: [
-            CircleAvatar(
-              child: Icon(category['icon'] as IconData),
-            ),
-            SizedBox(height: 5.h),
-            Text(category['name'] as String),
-          ],
-        );
-      }).toList(),
-    ),
-  );
-}
-
-  Widget _buildImageSlider() {
-    final List<String> imgList = [
-      'assets/images/jpgs/cover-180-0ff6d5.jpg',
-      'assets/images/jpgs/cover-180-91231d.jpg',
-      'assets/images/jpgs/cover-180-b73919.jpg',
-      'assets/images/jpgs/cover-180-debfed.jpg',
-      'assets/images/jpgs/cover-180-e1de87.jpg',
-    ];
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: 200.h,
-        autoPlay: true,
-        enlargeCenterPage: true,
-        aspectRatio: 2.0,
-      ),
-      items: imgList
-          .map((item) => Center(
-                child: Image.asset(
-                  item,
-                  fit: BoxFit.contain,
-                  width: 1000.w,
-                  height: 200.h,
-                ),
-              ))
-          .toList(),
-    );
-  }
-
-  Widget _buildMinOffBanner() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
-      child: Container(
-        color: Colors.orange[100],
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 20.h),
-        child: Center(
-          child: Column(
-            children: [
-              Text(
-                'MIN 15% OFF',
-                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10.h),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => DiscountProductScreen(),));
-                },
-                child: Text('SHOP NOW'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+  Widget _buildInfoSection() {
+    return Container(
+      color: Color(0xFFFCECDD),
+      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 30.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
-          TextButton(
-            onPressed: () {},
-            child: Text('View All', style: TextStyle(color: Colors.blue)),
+          Column(
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.local_shipping, size: 24),
+                  SizedBox(width: 5),
+                  Text('Ücretsiz kargo', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Text('Sınırlı süreli teklif', style: TextStyle(fontSize: 14.sp)),
+            ],
+          ),
+          VerticalDivider(color: Colors.black),
+          Column(
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.assignment_return, size: 24),
+                  SizedBox(width: 5),
+                  Text('Ücretsiz iade', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              Text('90 gün içinde', style: TextStyle(fontSize: 14.sp)),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildProductListSection(AsyncValue productsAsyncValue, String section) {
+  Widget _buildCategoryCarousel(AsyncValue<List<Product>> productsAsyncValue) {
+    final List<Map<String, dynamic>> categories = [
+      {
+        'title': 'Deal of the day',
+        'icon': Icons.local_offer,
+        'section': 'dealOfTheDay',
+      },
+      {
+        'title': 'Hot Selling',
+        'icon': Icons.local_fire_department,
+        'section': 'hotSellingFootwear',
+      },
+      {
+        'title': 'Recommended',
+        'icon': Icons.thumb_up,
+        'section': 'recommendedForYou',
+      },
+    ];
+
+    return CarouselSlider.builder(
+      options: CarouselOptions(
+        height: 120.h,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        viewportFraction: 0.3,
+        aspectRatio: 2.0,
+        scrollDirection: Axis.horizontal,
+      ),
+      itemCount: categories.length,
+      itemBuilder: (context, index, realIndex) {
+        final category = categories[index];
+        return _buildCategoryIcon(productsAsyncValue, category['section'], category['icon'], category['title']);
+      },
+    );
+  }
+
+  Widget _buildCategoryIcon(AsyncValue<List<Product>> productsAsyncValue, String section, IconData icon, String title) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            productsAsyncValue.whenData((products) {
+              List<Product> sectionProducts = _getSectionProducts(products, section);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductListScreen(
+                    sectionTitle: title,
+                    sectionProducts: sectionProducts,
+                  ),
+                ),
+              );
+            });
+          },
+          child: CircleAvatar(
+            radius: 30,
+            child: Icon(icon, size: 30, color: Colors.white),
+            backgroundColor: Colors.blue,
+          ),
+        ),
+        SizedBox(height: 5),
+        Text(title, style: TextStyle(fontSize: 14.sp)),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title, String section, AsyncValue<List<Product>> productsAsyncValue) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
+          TextButton(
+            onPressed: () {
+              productsAsyncValue.whenData((products) {
+                List<Product> sectionProducts = _getSectionProducts(products, section);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductListScreen(
+                      sectionTitle: title,
+                      sectionProducts: sectionProducts,
+                    ),
+                  ),
+                );
+              });
+            },
+            child: const Icon(Icons.arrow_forward_sharp),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductCarousel(AsyncValue<List<Product>> productsAsyncValue, String section) {
     return SizedBox(
       height: 250.h,
       child: productsAsyncValue.when(
         data: (products) {
-          List sectionProducts = _getSectionProducts(products, section);
+          List<Product> sectionProducts = _getSectionProducts(products, section);
           if (sectionProducts.isEmpty) {
-            return Center(child: Text(LocaleKeys.NoProductsAvailable.tr()));
+            return Center(child: Text('No Products Available'));
           }
-          final limitedProducts = sectionProducts.take(5).toList();
-          return ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: limitedProducts.length,
-            itemBuilder: (context, index) {
-              final product = limitedProducts[index];
-              return ProductItem(product: product, isFeatured: false);
+          return CarouselSlider.builder(
+            options: CarouselOptions(
+              height: 250.h,
+              autoPlay: true,
+              enlargeCenterPage: false,
+              viewportFraction: 0.5,
+              scrollDirection: Axis.horizontal,
+              enableInfiniteScroll: true,
+            ),
+            itemCount: sectionProducts.length,
+            itemBuilder: (context, index, realIndex) {
+              final product = sectionProducts[index];
+              return ProductItem(product: product, isFeatured: true);
             },
           );
         },
@@ -182,7 +216,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  List _getSectionProducts(List products, String section) {
+  List<Product> _getSectionProducts(List<Product> products, String section) {
     // Placeholder function, should filter products based on section
     return products;
   }
