@@ -32,9 +32,7 @@ class PaymentScreenState extends ConsumerState<PaymentScreen> {
         MaterialPageRoute(
           builder: (context) => const PaymentSuccessScreen(),
         ),
-      ).then((_) {
-        ref.read(cartProvider.notifier).clearCart();
-      });
+      );
     }
   }
 

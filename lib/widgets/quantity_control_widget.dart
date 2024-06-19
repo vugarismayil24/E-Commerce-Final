@@ -6,7 +6,7 @@ import '../providers/cart_provider.dart';
 class QuantityControl extends ConsumerStatefulWidget {
   final Product product;
 
-  const QuantityControl({super.key, required this.product});
+  const QuantityControl({super.key, required this.product, required void Function() onIncrement, required void Function() onDecrement});
 
   @override
   QuantityControlState createState() => QuantityControlState();
@@ -34,7 +34,7 @@ class QuantityControlState extends ConsumerState<QuantityControl> {
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            ref.read(cartProvider.notifier).incrementQuantity(productInCart);
+            ref.read(cartProvider.notifier).decrementQuantity(productInCart);
           },
         ),
       ],

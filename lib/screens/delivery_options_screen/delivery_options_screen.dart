@@ -1,7 +1,6 @@
-import 'package:e_com_app/screens/order_screen/cart_screen.dart';
-import 'package:e_com_app/screens/payment_screen/payment_screen.dart';
-
 import 'package:flutter/material.dart';
+import '../order_screen/cart_screen.dart';
+import '../payment_screen/payment_screen.dart';
 
 class DeliveryScreen extends StatelessWidget {
   const DeliveryScreen({Key? key}) : super(key: key);
@@ -11,14 +10,12 @@ class DeliveryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        
         title: const Text("Delivery Options"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CartScreen(),));
           },
-        
         ),
       ),
       body: Padding(

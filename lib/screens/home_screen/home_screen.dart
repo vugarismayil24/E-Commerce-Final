@@ -7,6 +7,7 @@ import '../../generated/locale_keys.g.dart';
 import '../../providers/products_provider.dart';
 import '../../widgets/product_item_widget.dart';
 import '../category_products_screen/category_products_screen.dart';
+import '../discount_screen/discount_screen.dart';
 import '../profile_setting_screen/profile_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -34,75 +35,55 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(LocaleKeys.Products.tr()),
+        title: Text("MCOM STORE"),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.person),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
-          },
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
-              child: Text(LocaleKeys.Filters.tr()),
-            ),
-          ],
-        ),
+        
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             _buildImageSlider(),
-            _buildSectionTitle(LocaleKeys.WhatsNew.tr(), 'whatsNew'),
-            _buildProductListSection(productsAsyncValue, 'whatsNew'),
-            _buildSectionTitle(LocaleKeys.FeaturedGame.tr(), 'featured'),
-            _buildFeaturedGameSection(productsAsyncValue, 'featured'),
-            _buildSectionTitle(LocaleKeys.PopularGames.tr(), 'popular'),
-            _buildProductListSection(productsAsyncValue, 'popular'),
-            _buildSectionTitle(LocaleKeys.Recommended.tr(), 'recommended'),
-            _buildProductListSection(productsAsyncValue, 'recommended'),
-            _buildSectionTitle(LocaleKeys.ComingSoon.tr(), 'comingSoon'),
-            _buildProductListSection(productsAsyncValue, 'comingSoon'),
-            _buildSectionTitle(LocaleKeys.DiscountedGames.tr(), 'discounted'),
-            _buildProductListSection(productsAsyncValue, 'discounted'),
+            _buildMinOffBanner(),
+            _buildSectionTitle('Deal of the day'),
+            _buildProductListSection(productsAsyncValue, 'dealOfTheDay'),
+            _buildSectionTitle('Hot Selling Footwear'),
+            _buildProductListSection(productsAsyncValue, 'hotSellingFootwear'),
+            _buildSectionTitle('Recommended for you'),
+            _buildProductListSection(productsAsyncValue, 'recommendedForYou'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title, String section) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
-          IconButton(
-            icon: const Icon(Icons.arrow_forward),
-            color: sectionLastItemVisible[section]! ? Colors.green : Colors.black,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CategoryProductsScreen(section: section),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  
+
+  Widget _buildCategoryRow() {
+  final categories = [
+    {'name': 'PC', 'icon': Icons.laptop},
+    {'name': 'Xbox', 'icon': Icons.tablet},
+    {'name': 'Nintendo', 'icon': Icons.nature_sharp},
+  ];
+
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 10.h),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: categories.map((category) {
+        return Column(
+          children: [
+            CircleAvatar(
+              child: Icon(category['icon'] as IconData),
+            ),
+            SizedBox(height: 5.h),
+            Text(category['name'] as String),
+          ],
+        );
+      }).toList(),
+    ),
+  );
+}
 
   Widget _buildImageSlider() {
     final List<String> imgList = [
@@ -114,14 +95,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     ];
     return CarouselSlider(
       options: CarouselOptions(
-        height: 350.h,
-        clipBehavior: Clip.none,
+        height: 200.h,
         autoPlay: true,
         enlargeCenterPage: true,
         aspectRatio: 2.0,
-        onPageChanged: (index, reason) {
-          setState(() {});
-        },
       ),
       items: imgList
           .map((item) => Center(
@@ -129,10 +106,54 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                   item,
                   fit: BoxFit.contain,
                   width: 1000.w,
-                  height: 500,
+                  height: 200.h,
                 ),
               ))
           .toList(),
+    );
+  }
+
+  Widget _buildMinOffBanner() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: Container(
+        color: Colors.orange[100],
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 20.h),
+        child: Center(
+          child: Column(
+            children: [
+              Text(
+                'MIN 15% OFF',
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10.h),
+              ElevatedButton(
+                onPressed: () {
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => DiscountProductScreen(),));
+                },
+                child: Text('SHOP NOW'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
+          TextButton(
+            onPressed: () {},
+            child: Text('View All', style: TextStyle(color: Colors.blue)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -146,68 +167,23 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             return Center(child: Text(LocaleKeys.NoProductsAvailable.tr()));
           }
           final limitedProducts = sectionProducts.take(5).toList();
-          return NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                setState(() {
-                  sectionLastItemVisible[section] = true;
-                });
-              } else {
-                setState(() {
-                  sectionLastItemVisible[section] = false;
-                });
-              }
-              return true;
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: limitedProducts.length,
+            itemBuilder: (context, index) {
+              final product = limitedProducts[index];
+              return ProductItem(product: product, isFeatured: false);
             },
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: limitedProducts.length,
-              itemBuilder: (context, index) {
-                final product = limitedProducts[index];
-                return ProductItem(product: product, isFeatured: false);
-              },
-            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Xetan burdadi: $error')),
-      ),
-    );
-  }
-
-  Widget _buildFeaturedGameSection(AsyncValue productsAsyncValue, String section) {
-    return SizedBox(
-      height: 300.h,
-      child: productsAsyncValue.when(
-        data: (products) {
-          final product = products.isNotEmpty ? products[0] : null;
-          if (product == null) {
-            return Center(child: Text(LocaleKeys.NoProductsAvailable.tr()));
-          }
-          return NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-                setState(() {
-                  sectionLastItemVisible[section] = true;
-                });
-              } else {
-                setState(() {
-                  sectionLastItemVisible[section] = false;
-                });
-              }
-              return true;
-            },
-            child: ProductItem(product: product, isFeatured: true),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error Message: $error')),
+        error: (error, stack) => Center(child: Text('Error: $error')),
       ),
     );
   }
 
   List _getSectionProducts(List products, String section) {
+    // Placeholder function, should filter products based on section
     return products;
   }
 }
-

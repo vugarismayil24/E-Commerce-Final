@@ -1,6 +1,7 @@
 import 'package:e_com_app/generated/locale_keys.g.dart';
 import 'package:e_com_app/screens/login_register_screens/login_screen.dart';
 import 'package:e_com_app/screens/login_register_screens/register_screen.dart';
+import 'package:e_com_app/screens/profile_setting_screen/profile_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,10 +14,12 @@ class BottomNavigationBarWidget extends ConsumerStatefulWidget {
   const BottomNavigationBarWidget({super.key});
 
   @override
-  BottomNavigationBarWidgetState createState() => BottomNavigationBarWidgetState();
+  BottomNavigationBarWidgetState createState() =>
+      BottomNavigationBarWidgetState();
 }
 
-class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWidget> {
+class BottomNavigationBarWidgetState
+    extends ConsumerState<BottomNavigationBarWidget> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -36,8 +39,10 @@ class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWi
       case 3:
         return const CartScreen();
       case 4:
-        return const RegisterScreen();
+        return const ProfileScreen();
       case 5:
+        return const RegisterScreen();
+      case 6:
         return const LoginScreen();
       default:
         return const HomeScreen();
@@ -82,6 +87,10 @@ class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWi
               BottomNavigationBarItem(
                 icon: const Icon(Icons.shopping_cart),
                 label: LocaleKeys.Cart.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.person),
+                label: LocaleKeys.Profile.tr(),
               ),
             ],
             currentIndex: _selectedIndex,

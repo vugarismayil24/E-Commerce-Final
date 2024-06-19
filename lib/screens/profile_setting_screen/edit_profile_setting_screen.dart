@@ -1,9 +1,8 @@
-import 'package:e_com_app/generated/locale_keys.g.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -24,6 +23,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -46,37 +47,38 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     _loadUserInfo();
   }
 
-  Future<DocumentSnapshot> getUserInfo() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot userInfo = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      return userInfo;
-    }
-    throw Exception('Kullanıcı oturumu açmamış');
-  }
-
   Future<void> _loadUserInfo() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      DocumentSnapshot userInfo = await getUserInfo();
-      Map<String, dynamic> data = userInfo.data() as Map<String, dynamic>;
-      setState(() {
-        _emailController.text = data['email'] ?? '';
-        _phoneNumberController.text = data['phoneNumber'] ?? '';
-        _usernameController.text = data['displayName'] ?? '';
-        _dobController.text = data['dob'] ?? '';
-        _address1Controller.text = data['address1'] ?? '';
-        _address2Controller.text = data['address2'] ?? '';
-        _postalCodeController.text = data['postalCode'] ?? '';
-        _cityController.text = data['city'] ?? '';
-        _countryController.text = data['country'] ?? '';
-      });
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot userInfo = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        Map<String, dynamic>? data = userInfo.data() as Map<String, dynamic>?;
+        if (data != null) {
+          _emailController.text = user.email ?? '';
+          _usernameController.text = data['displayName'] ?? user.displayName ?? '';
+          _phoneNumberController.text = data['phoneNumber'] ?? '';
+          _dobController.text = data['dob'] ?? '';
+          _address1Controller.text = data['address1'] ?? '';
+          _address2Controller.text = data['address2'] ?? '';
+          _postalCodeController.text = data['postalCode'] ?? '';
+          _cityController.text = data['city'] ?? '';
+          _countryController.text = data['country'] ?? '';
+        }
+      }
     } catch (e) {
       if (kDebugMode) {
         print("Error loading user info: $e");
       }
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -86,7 +88,21 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
-          .update(data);
+          .set(data, SetOptions(merge: true));
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
     }
   }
 
@@ -96,68 +112,82 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-               Text(
-                LocaleKeys.PleaseCompleteYourProfile.tr(),
-                style: const TextStyle(fontSize: 16.0),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16.0),
-              buildTextField(_emailController, Icons.email, LocaleKeys.Email.tr()),
-              buildTextField(
-                  _phoneNumberController, Icons.phone, LocaleKeys.PhoneNumber.tr()),
-              buildTextField(_usernameController, Icons.person, LocaleKeys.UserName.tr()),
-              buildTextField(_passwordController, Icons.lock, LocaleKeys.Password.tr(),
-                  obscureText: true),
-              buildTextField(_dobController, Icons.calendar_today, LocaleKeys.Birtday.tr()),
-              buildTextField(_address1Controller, Icons.home, LocaleKeys.Address1.tr()),
-              buildTextField(_address2Controller, Icons.home, LocaleKeys.Addres2.tr()),
-              buildTextField(_postalCodeController, Icons.mail, LocaleKeys.PostalCode.tr()),
-              const SizedBox(height: 20.0),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Map<String, dynamic> updatedData = {
-                      'email': _emailController.text,
-                      'phoneNumber': _phoneNumberController.text,
-                      'displayName': _usernameController.text,
-                      'dob': _dobController.text,
-                      'address1': _address1Controller.text,
-                      'address2': _address2Controller.text,
-                      'postalCode': _postalCodeController.text,
-                      'city': _cityController.text,
-                      'country': _countryController.text,
-                    };
-                    updateUserInfo(updatedData).then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Profile updated successfully')),
-                      );
-                    }).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text('Failed to update profile: $error')),
-                      );
-                    });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    Text(
+                      'Zəhmət olmasa profilinizi tamamlayın',
+                      style: const TextStyle(fontSize: 16.0),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16.0),
+                    buildTextField(_emailController, Icons.email, 'E-poçt'),
+                    buildTextField(
+                        _phoneNumberController, Icons.phone, 'Telefon Nömrəniz +90'),
+                    buildTextField(_usernameController, Icons.person, 'İstifadəçi adınız'),
+                    buildTextField(_passwordController, Icons.lock, 'Şifrəniz',
+                        obscureText: true),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: AbsorbPointer(
+                        child: buildTextField(
+                            _dobController, Icons.calendar_today, 'Doğum Tarixi'),
+                      ),
+                    ),
+                    buildTextField(_address1Controller, Icons.home, 'Ünvan'),
+                    buildTextField(_address2Controller, Icons.home, 'Ünvan 2'),
+                    buildTextField(_postalCodeController, Icons.mail, 'Poçt Kodunuz'),
+                    const SizedBox(height: 20.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          Map<String, dynamic> updatedData = {
+                            'phoneNumber': _phoneNumberController.text,
+                            'dob': _dobController.text,
+                            'address1': _address1Controller.text,
+                            'address2': _address2Controller.text,
+                            'postalCode': _postalCodeController.text,
+                            'city': _cityController.text,
+                            'country': _countryController.text,
+                          };
+                          updateUserInfo(updatedData).then((_) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Profile updated successfully')),
+                            );
+                          }).catchError((error) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to update profile: $error')),
+                            );
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      ),
+                      child: const Text(
+                        'Confirm',
+                        style: TextStyle(color: Color(0xffffffff)),
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  'Confirm',
-                  style: TextStyle(color: Color(0xffffffff)),
-                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 

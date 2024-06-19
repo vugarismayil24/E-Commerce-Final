@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,9 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
-import '../../widgets/bottom_navigation_bar_widget.dart';
 import '../../widgets/quantity_control_widget.dart';
 import '../delivery_options_screen/delivery_options_screen.dart';
+import '../home_screen/home_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -30,7 +32,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
   }
 
   Future<void> _loadCart() async {
-    await ref.read(cartProvider.notifier).loadCart();
+    await ref.read(cartProvider.notifier).loadCartFromPrefs();
   }
 
   void _applyCoupon() {
@@ -38,7 +40,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
       setState(() {
         _isCouponApplied = true;
         _isCouponValid = true;
-        _discountAmount = 1.0; 
+        _discountAmount = 1.0;
       });
     } else {
       setState(() {
@@ -47,7 +49,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
         _discountAmount = 0.0;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text(LocaleKeys.InvalidCouponCode.tr(),)),
+        SnackBar(
+          content: Text(
+            LocaleKeys.InvalidCouponCode.tr(),
+          ),
+        ),
       );
     }
   }
@@ -57,26 +63,25 @@ class CartScreenState extends ConsumerState<CartScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(LocaleKeys.Checkout.tr(),),
-          content:  Text(LocaleKeys.AreYouSureYouWantToCheckout.tr(),),
+          title: Text(LocaleKeys.Checkout.tr()),
+          content: Text(LocaleKeys.AreYouSureYouWantToCheckout.tr()),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child:  Text(LocaleKeys.Cancel.tr()),
+              child: Text(LocaleKeys.Cancel.tr()),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        const DeliveryScreen(),
+                    builder: (context) => const DeliveryScreen(),
                   ),
                 );
               },
-              child:  Text(LocaleKeys.Confirm.tr()),
+              child: Text(LocaleKeys.Confirm.tr()),
             ),
           ],
         );
@@ -89,21 +94,21 @@ class CartScreenState extends ConsumerState<CartScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(LocaleKeys.RemoveItem.tr(),),
-          content:  Text(LocaleKeys.AreYouSureYouWantToRemoveThisItem.tr(),),
+          title: Text(LocaleKeys.RemoveItem.tr()),
+          content: Text(LocaleKeys.AreYouSureYouWantToRemoveThisItem.tr()),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child:  Text(LocaleKeys.Cancel.tr()),
+              child: Text(LocaleKeys.Cancel.tr()),
             ),
             TextButton(
               onPressed: () {
                 ref.read(cartProvider.notifier).removeFromCart(product);
                 Navigator.of(context).pop();
               },
-              child:  Text(LocaleKeys.Confirm.tr()),
+              child: Text(LocaleKeys.Confirm.tr()),
             ),
           ],
         );
@@ -115,28 +120,26 @@ class CartScreenState extends ConsumerState<CartScreen> {
   Widget build(BuildContext context) {
     final cartItems = ref.watch(cartProvider);
 
-    double totalPrice =
-        cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
-    double taxesAndCharges =
-        totalPrice * 0.05; 
+    double totalPrice = cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+    double taxesAndCharges = totalPrice * 0.05;
     double finalTotal = totalPrice + taxesAndCharges - _discountAmount;
 
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
-          (Route<dynamic> route) => false,
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
         return false;
       },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title:  Text(LocaleKeys.OrderDetails.tr()),
+          title: Text(LocaleKeys.OrderDetails.tr()),
           automaticallyImplyLeading: false,
         ),
         body: cartItems.isEmpty
-            ?  Center(
+            ? Center(
                 child: Text(
                   LocaleKeys.YourCartIsEmpty.tr(),
                   style: const TextStyle(
@@ -175,8 +178,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                   SizedBox(width: 10.w),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           product.title,
@@ -188,7 +190,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                         SizedBox(height: 4.h),
                                         Row(
                                           children: [
-                                            QuantityControl(product: product),
+                                            QuantityControl(product: product, onIncrement: () {}, onDecrement: () {}),
                                             const Spacer(),
                                             Text(
                                               '${product.price * product.quantity} ₼',
@@ -205,8 +207,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete),
-                                    onPressed: () => _showRemoveDialog(
-                                        context, ref, product),
+                                    onPressed: () => _showRemoveDialog(context, ref, product),
                                   ),
                                 ],
                               ),
@@ -218,8 +219,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 8.h),
                       child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 16.h, horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16.r),
@@ -237,19 +237,15 @@ class CartScreenState extends ConsumerState<CartScreen> {
                             GestureDetector(
                               onTap: _applyCoupon,
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.card_giftcard,
-                                          color: Colors.purple, size: 20.w),
+                                      Icon(Icons.card_giftcard, color: Colors.purple, size: 20.w),
                                       SizedBox(width: 8.w),
                                       Text(
-                                       LocaleKeys.ApplyCoupon.tr(),
-                                        style: TextStyle(
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold),
+                                        LocaleKeys.ApplyCoupon.tr(),
+                                        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -257,16 +253,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                     children: [
                                       if (_isCouponApplied)
                                         Icon(
-                                          _isCouponValid
-                                              ? Icons.check_circle
-                                              : Icons.cancel,
-                                          color: _isCouponValid
-                                              ? Colors.green
-                                              : Colors.red,
+                                          _isCouponValid ? Icons.check_circle : Icons.cancel,
+                                          color: _isCouponValid ? Colors.green : Colors.red,
                                           size: 24.w,
                                         ),
-                                      Icon(Icons.arrow_forward_ios,
-                                          size: 16.sp),
+                                      Icon(Icons.arrow_forward_ios, size: 16.sp),
                                     ],
                                   ),
                                 ],
@@ -289,15 +280,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   LocaleKeys.SubTotal.tr(),
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${totalPrice.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -307,15 +294,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   LocaleKeys.TaxedAndCharges.tr(),
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${taxesAndCharges.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -325,15 +308,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   LocaleKeys.Discount.tr(),
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${_discountAmount.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -343,15 +322,11 @@ class CartScreenState extends ConsumerState<CartScreen> {
                               children: [
                                 Text(
                                   LocaleKeys.Total.tr(),
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   '${finalTotal.toStringAsFixed(2)} ₼',
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -367,25 +342,20 @@ class CartScreenState extends ConsumerState<CartScreen> {
                         children: [
                           Text(
                             '${finalTotal.toStringAsFixed(2)} ₼',
-                            style: TextStyle(
-                                fontSize: 18.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
                           ElevatedButton(
                             onPressed: () => _showCheckoutDialog(context, ref),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.yellow[700],
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 32.w, vertical: 12.h),
+                              padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                             ),
                             child: Text(
                               LocaleKeys.MakePayment.tr(),
-                              style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                           ),
                         ],
