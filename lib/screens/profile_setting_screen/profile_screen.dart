@@ -1,16 +1,19 @@
-// ignore_for_file: deprecated_member_use
-
-import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_com_app/providers/favorites_provider.dart';
+import 'package:e_com_app/screens/favorites_screen/favorites_screen.dart';
+import 'package:e_com_app/screens/order_screen/cart_screen.dart';
+import 'package:e_com_app/screens/profile_setting_screen/faq_screen/faq_screen.dart';
+import 'package:e_com_app/screens/profile_setting_screen/support_screen/support_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../providers/theme_provider.dart';
-import 'edit_profile_setting_screen.dart';
-import '../login_register_screens/login_screen.dart';
 import '../../services/auth_service.dart';
+import '../login_register_screens/login_screen.dart';
+import '../../widgets/bottom_navigation_bar_widget.dart';
+import 'edit_profile_setting_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -77,7 +80,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+                MaterialPageRoute(
+                    builder: (context) => const BottomNavigationBarWidget()),
               );
             },
           ),
@@ -93,138 +97,100 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                      "https://miro.medium.com/v2/resize:fit:1400/1*oRpNYT1pE4yJntC7qAdiYQ.png"),
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  "https://miro.medium.com/v2/resize:fit:1400/1*oRpNYT1pE4yJntC7qAdiYQ.png",
                 ),
               ),
               const SizedBox(height: 20),
-              Center(
+              Text(
+                userName,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                FirebaseAuth.instance.currentUser?.displayName ?? "",
+                
+              ),
+              const SizedBox(height: 5),
+              Text(
+                FirebaseAuth.instance.currentUser?.email ?? "",
+                
+              ),
+              const SizedBox(height: 15),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfileScreen(),
+                    ),
+                  );
+                },
                 child: Text(
-                  userName,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  LocaleKeys.EditProfile.tr(),
+                  style: TextStyle(color: theme.primaryColor),
                 ),
               ),
-              Center(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const EditProfileScreen()),
-                        );
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        width: 150,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: theme.primaryColor,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Text(
-                          LocaleKeys.EditProfile.tr(),
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+              const Divider(height: 40),
+              ListTile(
+                leading: const Icon(Icons.location_on, size: 30),
+                title: Text(LocaleKeys.Address1.tr(),),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfileScreen(),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            alignment: Alignment.center,
-                            width: 155,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.secondary,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                            ),
-                            child: Text(
-                              "${LocaleKeys.Bonus.tr()}: $bonus",
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            width: 155,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.secondary,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                            ),
-                            child: Text(
-                              "${LocaleKeys.Balance.tr()}: $balance",
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
-              const SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Center(
-                    child: GestureDetector(
-                      onTap: () => _logout(context),
-                      child: Container(
-                        width: 150,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(12)),
-                            border: Border.all(
-                                color: theme.dividerColor,
-                                strokeAlign: BorderSide.strokeAlignOutside)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 27.5),
-                          child: Row(
-                            children: [
-                              Text(
-                                LocaleKeys.LogOut.tr(),
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.textTheme.bodyLarge?.color,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Icon(
-                                Icons.exit_to_app,
-                                color: theme.iconTheme.color,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+              ListTile(
+                leading: const Icon(Icons.favorite, size: 30),
+                title: const Text("Wishlist", ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritesScreen(),));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.shopping_bag, size: 30),
+                title: const Text("Səbətim"),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen(),));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.help, size: 30),
+                title: const Text("FAQ",),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => FAQScreen(),));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.support, size: 30),
+                title: const Text("Support", ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SupportScreen(),));
+                },
+              ),
+              const Divider(height: 40),
+              ListTile(
+                title: const Center(
+                  child: Text(
+                    "Sign Out",
+                    style: TextStyle(color: Colors.red),
                   ),
-                ],
+                ),
+                onTap: () => _logout(context),
               ),
             ],
           ),
@@ -232,4 +198,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
   }
+}
+
+class Wishlist {
 }

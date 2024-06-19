@@ -36,7 +36,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             _buildCategoryCarousel(productsAsyncValue),
             
             
@@ -55,7 +55,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildInfoSection() {
     return Container(
-      color: Color(0xFFFCECDD),
+      color: const Color(0xFFFCECDD),
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 30.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,21 +64,21 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.local_shipping, size: 24),
-                  SizedBox(width: 5),
+                  const Icon(Icons.local_shipping, size: 24),
+                  const SizedBox(width: 5),
                   Text('Ücretsiz kargo', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
                 ],
               ),
               Text('Sınırlı süreli teklif', style: TextStyle(fontSize: 14.sp)),
             ],
           ),
-          VerticalDivider(color: Colors.black),
+          const VerticalDivider(color: Colors.black),
           Column(
             children: [
               Row(
                 children: [
-                  Icon(Icons.assignment_return, size: 24),
-                  SizedBox(width: 5),
+                  const Icon(Icons.assignment_return, size: 24),
+                  const SizedBox(width: 5),
                   Text('Ücretsiz iade', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
                 ],
               ),
@@ -112,7 +112,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     return CarouselSlider.builder(
       options: CarouselOptions(
         height: 120.h,
-        autoPlay: true,
+        autoPlay: false,
         enlargeCenterPage: true,
         viewportFraction: 0.3,
         aspectRatio: 2.0,
@@ -147,10 +147,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           child: CircleAvatar(
             radius: 30,
             child: Icon(icon, size: 30, color: Colors.white),
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Text(title, style: TextStyle(fontSize: 14.sp)),
       ],
     );
@@ -192,7 +192,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         data: (products) {
           List<Product> sectionProducts = _getSectionProducts(products, section);
           if (sectionProducts.isEmpty) {
-            return Center(child: Text('No Products Available'));
+            return const Center(child: Text('No Products Available'));
           }
           return CarouselSlider.builder(
             options: CarouselOptions(

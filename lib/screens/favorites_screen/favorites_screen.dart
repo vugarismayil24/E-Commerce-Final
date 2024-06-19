@@ -23,6 +23,16 @@ class FavoritesScreen extends ConsumerWidget {
       },
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BottomNavigationBarWidget()),
+              );
+            },
+          ),
           automaticallyImplyLeading: false,
           title: Text(LocaleKeys.Favorites.tr()),
         ),
