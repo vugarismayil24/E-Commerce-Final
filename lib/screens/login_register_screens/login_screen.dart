@@ -95,9 +95,12 @@ class LoginScreenState extends State<LoginScreen> {
                       height: 900.h,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFFEE7752), Color(0xFFE73C7E)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF2A9D8F),
+                            Color.fromARGB(255, 77, 76, 76),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
                       ),
                     ),
@@ -297,7 +300,7 @@ class LoginScreenState extends State<LoginScreen> {
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
-                                  child:  Text(
+                                  child: Text(
                                     LocaleKeys.Login.tr(),
                                     style: TextStyle(
                                       color: Colors.white,

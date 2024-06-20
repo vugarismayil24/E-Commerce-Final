@@ -34,7 +34,8 @@ class SignupPageState extends State<RegisterScreen> {
 
   Future<void> registerUser() async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -48,11 +49,12 @@ class SignupPageState extends State<RegisterScreen> {
           'balance': 0,
           'bonus': 0,
         });
-        
+
         // Başarılı kayıt işlemi sonrası kullanıcıyı ana ekrana yönlendirme
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),
+          MaterialPageRoute(
+              builder: (context) => const BottomNavigationBarWidget()),
         );
       }
     } catch (e) {
@@ -87,9 +89,12 @@ class SignupPageState extends State<RegisterScreen> {
                       height: 900.h,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFFEE7752), Color(0xFFE73C7E)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF2A9D8F),
+                            Color.fromARGB(255, 77, 76, 76),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
                       ),
                     ),
@@ -127,7 +132,8 @@ class SignupPageState extends State<RegisterScreen> {
                                     InkWell(
                                       onTap: () {},
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.h, horizontal: 16.w),
                                         child: Text(
                                           LocaleKeys.SignUp.tr(),
                                           style: TextStyle(
@@ -142,11 +148,14 @@ class SignupPageState extends State<RegisterScreen> {
                                       onTap: () {
                                         Navigator.pushReplacement(
                                           context,
-                                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginScreen()),
                                         );
                                       },
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.h, horizontal: 16.w),
                                         child: Text(
                                           LocaleKeys.SignIn.tr(),
                                           style: TextStyle(
@@ -163,8 +172,10 @@ class SignupPageState extends State<RegisterScreen> {
                                 InkWell(
                                   onTap: () {},
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 12.h),
-                                    margin: EdgeInsets.symmetric(horizontal: 16.w),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 12.h),
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 16.w),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(10.r),
@@ -176,14 +187,21 @@ class SignupPageState extends State<RegisterScreen> {
                                       ],
                                     ),
                                     child: InkWell(
-                                      onTap: () async{
+                                      onTap: () async {
                                         AuthService().signInWithGoogle();
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget(),));
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const BottomNavigationBarWidget(),
+                                            ));
                                       },
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          const FaIcon(FontAwesomeIcons.google, color: Colors.red),
+                                          const FaIcon(FontAwesomeIcons.google,
+                                              color: Colors.red),
                                           SizedBox(width: 10.w),
                                           Text(
                                             'Google',
@@ -199,7 +217,8 @@ class SignupPageState extends State<RegisterScreen> {
                                 ),
                                 SizedBox(height: 20.h),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.w),
                                   child: Column(
                                     children: [
                                       TextField(
@@ -207,7 +226,8 @@ class SignupPageState extends State<RegisterScreen> {
                                         decoration: InputDecoration(
                                           hintText: LocaleKeys.Name.tr(),
                                           border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
                                           ),
                                         ),
                                       ),
@@ -215,9 +235,10 @@ class SignupPageState extends State<RegisterScreen> {
                                       TextField(
                                         controller: _emailController,
                                         decoration: InputDecoration(
-                                          hintText:  LocaleKeys.Email.tr(),
+                                          hintText: LocaleKeys.Email.tr(),
                                           border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
                                           ),
                                         ),
                                       ),
@@ -226,9 +247,10 @@ class SignupPageState extends State<RegisterScreen> {
                                         controller: _passwordController,
                                         obscureText: !_passwordVisible,
                                         decoration: InputDecoration(
-                                          hintText:  LocaleKeys.Password.tr(),
+                                          hintText: LocaleKeys.Password.tr(),
                                           border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
                                           ),
                                           suffixIcon: IconButton(
                                             icon: Icon(
@@ -238,7 +260,8 @@ class SignupPageState extends State<RegisterScreen> {
                                             ),
                                             onPressed: () {
                                               setState(() {
-                                                _passwordVisible = !_passwordVisible;
+                                                _passwordVisible =
+                                                    !_passwordVisible;
                                               });
                                             },
                                           ),
@@ -251,22 +274,31 @@ class SignupPageState extends State<RegisterScreen> {
                                 ElevatedButton(
                                   onPressed: () async {
                                     if (_fullNameController.text.isEmpty) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Please enter your full name')),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Please enter your full name')),
                                       );
                                       return;
                                     }
 
                                     if (!_emailController.text.contains('@')) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Please enter a valid email')),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Please enter a valid email')),
                                       );
                                       return;
                                     }
 
                                     if (_passwordController.text.length < 8) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Password must be at least 8 characters long')),
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Password must be at least 8 characters long')),
                                       );
                                       return;
                                     }
@@ -280,8 +312,8 @@ class SignupPageState extends State<RegisterScreen> {
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
-                                  child:  Text(
-                                     LocaleKeys.SignUp.tr(),
+                                  child: Text(
+                                    LocaleKeys.SignUp.tr(),
                                     style: const TextStyle(
                                       color: Colors.white,
                                     ),

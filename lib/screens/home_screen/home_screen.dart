@@ -146,8 +146,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           },
           child: CircleAvatar(
             radius: 30,
-            child: Icon(icon, size: 30, color: Colors.white),
             backgroundColor: Colors.green,
+            child: Icon(icon, size: 30, color: Colors.white),
           ),
         ),
         const SizedBox(height: 5),
@@ -197,7 +197,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           return CarouselSlider.builder(
             options: CarouselOptions(
               height: 250.h,
-              autoPlay: true,
+              autoPlay: false,
               enlargeCenterPage: false,
               viewportFraction: 0.5,
               scrollDirection: Axis.horizontal,
@@ -217,7 +217,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   List<Product> _getSectionProducts(List<Product> products, String section) {
-    // Placeholder function, should filter products based on section
     return products;
   }
 }

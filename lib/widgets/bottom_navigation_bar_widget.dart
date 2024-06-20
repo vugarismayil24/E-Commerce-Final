@@ -14,12 +14,10 @@ class BottomNavigationBarWidget extends ConsumerStatefulWidget {
   const BottomNavigationBarWidget({super.key});
 
   @override
-  BottomNavigationBarWidgetState createState() =>
-      BottomNavigationBarWidgetState();
+  BottomNavigationBarWidgetState createState() => BottomNavigationBarWidgetState();
 }
 
-class BottomNavigationBarWidgetState
-    extends ConsumerState<BottomNavigationBarWidget> {
+class BottomNavigationBarWidgetState extends ConsumerState<BottomNavigationBarWidget> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -54,13 +52,12 @@ class BottomNavigationBarWidgetState
     return Scaffold(
       body: _getSelectedWidget(),
       bottomNavigationBar: Container(
-        clipBehavior: Clip.none,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
-              blurRadius: 120,
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
               spreadRadius: 5,
             ),
           ],
@@ -73,23 +70,58 @@ class BottomNavigationBarWidgetState
           child: BottomNavigationBar(
             items: [
               BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _selectedIndex == 0 ? Colors.blue.shade100 : Colors.transparent,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.home, color: _selectedIndex == 0 ? Colors.green : Colors.grey),
+                ),
                 label: LocaleKeys.Home.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.search),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _selectedIndex == 1 ? Colors.blue.shade100 : Colors.transparent,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.search, color: _selectedIndex == 1 ? Colors.green : Colors.grey),
+                ),
                 label: LocaleKeys.Search.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.favorite),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _selectedIndex == 2 ? Colors.blue.shade100 : Colors.transparent,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.favorite, color: _selectedIndex == 2 ? Colors.green : Colors.grey),
+                ),
                 label: LocaleKeys.Favorites.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.shopping_cart),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _selectedIndex == 3 ? Colors.blue.shade100 : Colors.transparent,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.shopping_cart, color: _selectedIndex == 3 ? Colors.green : Colors.grey),
+                ),
                 label: LocaleKeys.Cart.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.person),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _selectedIndex == 4 ? Colors.blue.shade100 : Colors.transparent,
+                  ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(Icons.person, color: _selectedIndex == 4 ? Colors.green : Colors.grey),
+                ),
                 label: LocaleKeys.Profile.tr(),
               ),
             ],
