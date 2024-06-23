@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_com_app/providers/favorites_provider.dart';
 import 'package:e_com_app/screens/favorites_screen/favorites_screen.dart';
 import 'package:e_com_app/screens/order_screen/cart_screen.dart';
 import 'package:e_com_app/screens/profile_setting_screen/faq_screen/faq_screen.dart';
@@ -155,7 +154,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: const Text("Wishlist", ),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                 Navigator.push(context, MaterialPageRoute(builder: (context) => FavoritesScreen(),));
+                 Navigator.push(context, MaterialPageRoute(builder: (context) => const FavoritesScreen(),));
                 },
               ),
               ListTile(
@@ -163,7 +162,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: const Text("Səbətim"),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CartScreen(),));
                 },
               ),
               ListTile(
@@ -171,7 +170,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: const Text("FAQ",),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => FAQScreen(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQScreen(),));
                 },
               ),
               ListTile(
@@ -179,7 +178,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title: const Text("Support", ),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SupportScreen(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SupportScreen(),));
                 },
               ),
               const Divider(height: 40),

@@ -34,7 +34,7 @@ class QuantityControlState extends ConsumerState<QuantityControl> {
         IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-            ref.read(cartProvider.notifier).decrementQuantity(productInCart);
+            ref.read(cartProvider.notifier).incrementQuantity(productInCart);
           },
         ),
       ],

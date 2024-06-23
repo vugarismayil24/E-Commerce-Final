@@ -14,7 +14,18 @@ class CartNotifier extends StateNotifier<List<Product>> {
   }
 
   Future<void> addToCart(Product product, {required int quantity}) async {
-    state = [...state, product];
+    final existingProductIndex = state.indexWhere((item) => item.id == product.id);
+    if (existingProductIndex >= 0) {
+      state = [
+        for (int i = 0; i < state.length; i++)
+          if (i == existingProductIndex)
+            state[i].copyWith(quantity: state[i].quantity + quantity)
+          else
+            state[i]
+      ];
+    } else {
+      state = [...state, product.copyWith(quantity: quantity)];
+    }
     await _saveCartToPrefs();
   }
 
@@ -44,5 +55,23 @@ class CartNotifier extends StateNotifier<List<Product>> {
     }
   }
 
-  void decrementQuantity(Product productInCart) {}
+  void incrementQuantity(Product productInCart) {
+    state = state.map((product) {
+      if (product.id == productInCart.id) {
+        return product.copyWith(quantity: product.quantity + 1);
+      }
+      return product;
+    }).toList();
+    _saveCartToPrefs();
+  }
+
+  void decrementQuantity(Product productInCart) {
+    state = state.map((product) {
+      if (product.id == productInCart.id && product.quantity > 1) {
+        return product.copyWith(quantity: product.quantity - 1);
+      }
+      return product;
+    }).toList();
+    _saveCartToPrefs();
+  }
 }

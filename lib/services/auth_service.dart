@@ -21,14 +21,12 @@ class AuthService {
       User? user = userCredential.user;
 
       if (user != null) {
-        // Firestore'a kullanıcı bilgilerini ekle
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'userName': name,
           'email': email,
           'balance': 0,
           'bonus': 0,
         });
-        // Oturum açma durumunu kaydet
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
         await prefs.setString('loginMethod', 'email');
@@ -49,7 +47,6 @@ class AuthService {
         email: email,
         password: password,
       );
-      // Oturum açma durumunu kaydet
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('loginMethod', 'email');
@@ -94,7 +91,6 @@ class AuthService {
     );
     final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
 
-    // Oturum açma durumunu kaydet
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);
     await prefs.setString('loginMethod', 'google');
@@ -111,7 +107,6 @@ class AuthService {
       if (loginMethod == 'google') {
         await signInWithGoogle();
       } else if (loginMethod == 'email') {
-        // Email ve şifre ile giriş yapıldıysa, zaten kullanıcı oturum açmış durumda olacak
       }
     }
   }

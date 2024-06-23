@@ -18,11 +18,12 @@ class PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   void _submitPayment() {
     if (_cardNumberController.text.isEmpty ||
+        _cardNumberController.text.length != 16 ||
         _expiryDateController.text.isEmpty ||
         _cvvController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('All fields are required!'),
+          content: Text('All fields are required and card number must be 16 digits!'),
         ),
       );
     } else {
@@ -47,7 +48,7 @@ class PaymentScreenState extends ConsumerState<PaymentScreen> {
       formattedValue = '${newValue.substring(0, 2)}/${newValue.substring(2)}';
     }
 
-    // Kontrol edilmesi gereken uzunluğu 5'e kadar sınırlama
+
     if (newValue.length > 4) {
       formattedValue = '${newValue.substring(0, 2)}/${newValue.substring(2, 4)}';
     }

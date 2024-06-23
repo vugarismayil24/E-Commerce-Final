@@ -50,7 +50,6 @@ class SignupPageState extends State<RegisterScreen> {
           'bonus': 0,
         });
 
-        // Başarılı kayıt işlemi sonrası kullanıcıyı ana ekrana yönlendirme
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

@@ -160,7 +160,7 @@ class SearchScreenState extends ConsumerState<SearchScreen> {
               centerTitle: true,
               actions: [
                 IconButton(
-                  icon: Icon(Icons.filter_list),
+                  icon: const Icon(Icons.filter_list),
                   onPressed: _showFilterDialog,
                 ),
               ],

@@ -5,7 +5,7 @@ class Product {
   final double price;
   final String description;
   final String category;
-  final String? gameID; // Yeni eklenen gameID
+  final String? gameID; 
   int quantity;
 
   Product({
@@ -15,19 +15,19 @@ class Product {
     required this.price,
     required this.description,
     required this.category,
-    required this.gameID, // gameID'yi constructor'a ekledik
+    required this.gameID, 
     this.quantity = 1,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['dealID'] ?? '', // API'den gelen ID
+      id: json['dealID'] ?? '', 
       title: json['title'] ?? '',
       imageUrl: json['thumb'] ?? '',
       price: double.tryParse(json['salePrice']) ?? 0.0,
       description: json['dealID'] ?? '',
       category: 'Games',
-      gameID: json['gameID'] ?? '', // gameID'yi JSON'dan alıyoruz
+      gameID: json['gameID'] ?? '', 
       quantity: 1,
     );
   }
@@ -42,7 +42,7 @@ class Product {
       'price': price,
       'description': description,
       'category': category,
-      'gameID': gameID, // gameID'yi JSON'a ekliyoruz
+      'gameID': gameID,
       'quantity': quantity,
     };
   }
@@ -55,7 +55,7 @@ class Product {
       price: map['price'] ?? 0.0,
       description: map['description'] ?? '',
       category: map['category'] ?? '',
-      gameID: map['gameID'] ?? '', // gameID'yi map'ten alıyoruz
+      gameID: map['gameID'] ?? '', 
       quantity: map['quantity'] ?? 1,
     );
   }
@@ -68,7 +68,7 @@ class Product {
       'price': price,
       'description': description,
       'category': category,
-      'gameID': gameID, // gameID'yi map'e ekliyoruz
+      'gameID': gameID, 
       'quantity': quantity,
     };
   }
@@ -90,7 +90,7 @@ class Product {
       price: price ?? this.price,
       description: description ?? this.description,
       category: category ?? this.category,
-      gameID: gameID ?? this.gameID, // gameID'yi copyWith için ekledik
+      gameID: gameID ?? this.gameID,
       quantity: quantity ?? this.quantity,
     );
   }

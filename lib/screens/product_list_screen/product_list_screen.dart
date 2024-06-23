@@ -7,7 +7,7 @@ class ProductListScreen extends ConsumerWidget {
   final String sectionTitle;
   final List<Product> sectionProducts;
 
-  ProductListScreen({
+  const ProductListScreen({super.key, 
     required this.sectionTitle,
     required this.sectionProducts,
   });

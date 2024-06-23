@@ -1,12 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/product_model.dart';
 
-// Kullanıcı rolü için provider
 final userRoleProvider = StateProvider<String>((ref) {
-  return 'customer'; // Varsayılan olarak 'customer' (müşteri) rolü
+  return 'customer'; 
 });
 
-// Ürün yönetimi için StateNotifier ve StateNotifierProvider
 class ProductNotifier extends StateNotifier<List<Product>> {
   ProductNotifier() : super([]);
 

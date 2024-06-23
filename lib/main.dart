@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +13,9 @@ import 'widgets/bottom_navigation_bar_widget.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print('Handling a background message: ${message.messageId}');
+  if (kDebugMode) {
+    print('Handling a background message: ${message.messageId}');
+  }
 }
 
 void main() async {
@@ -63,51 +66,3 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  late FirebaseMessaging messaging;
-
-  @override
-  void initState() {
-    super.initState();
-
-    messaging = FirebaseMessaging.instance;
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        showDialog(
-          context: context,
-          builder: (_) {
-            return AlertDialog(
-              title: Text(notification.title!),
-              content: Text(notification.body!),
-            );
-          },
-        );
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
-      // Handle the message by navigating to a different screen, for example.
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Screen'),
-      ),
-      body: Center(
-        child: Text('FCM with Flutter'),
-      ),
-    );
-  }
-}

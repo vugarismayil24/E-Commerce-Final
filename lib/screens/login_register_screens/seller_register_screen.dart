@@ -44,7 +44,6 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
           'bonus': 0,
         });
 
-        // Başarılı kayıt işlemi sonrası kullanıcıyı ana ekrana yönlendirme
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()),

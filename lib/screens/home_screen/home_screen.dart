@@ -1,3 +1,4 @@
+import 'package:e_com_app/screens/admin/admin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,17 +30,19 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text("MCOM STORE"),
+        title: const Text("E-COM STORE"),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AdminScreen(),));
+          }, icon: Icon(Icons.admin_panel_settings))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 10,),
             _buildCategoryCarousel(productsAsyncValue),
-            
-            
             _buildInfoSection(),
             _buildSectionTitle('Deal of the day', 'dealOfTheDay', productsAsyncValue),
             _buildProductCarousel(productsAsyncValue, 'dealOfTheDay'),
@@ -113,7 +116,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       options: CarouselOptions(
         height: 120.h,
         autoPlay: false,
-        enlargeCenterPage: true,
+        enlargeCenterPage: false,
         viewportFraction: 0.3,
         aspectRatio: 2.0,
         scrollDirection: Axis.horizontal,
@@ -150,7 +153,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             child: Icon(icon, size: 30, color: Colors.white),
           ),
         ),
-        const SizedBox(height: 5),
         Text(title, style: TextStyle(fontSize: 14.sp)),
       ],
     );

@@ -18,7 +18,6 @@ class _SupportScreenState extends State<SupportScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Formu Firestore'a kaydedin
       await FirebaseFirestore.instance.collection('support_tickets').add({
         'name': _nameController.text,
         'email': _emailController.text,
@@ -27,12 +26,10 @@ class _SupportScreenState extends State<SupportScreen> {
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      // Kullanıcıya formun başarıyla gönderildiğini bildirin
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Destek talebiniz başarıyla gönderildi')),
+        const SnackBar(content: Text('Destek talebiniz başarıyla gönderildi')),
       );
 
-      // Formu temizle
       _formKey.currentState!.reset();
     }
   }

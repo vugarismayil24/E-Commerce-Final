@@ -43,8 +43,8 @@ class DeliveryScreen extends StatelessWidget {
                     children: [
                       const SizedBox(width: 10,),
                       Image.network(
-                        "https://s3-alpha-sig.figma.com/img/9a11/cdca/114c57530582307a01d0c7ac62ec7485?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=PvBznquG53nWq2ArDi7bqNVEMmFZyrNadG-LpKaJ71HWNyv38NnYKwrCglHvt~TgCBVvqgGR2JL8-VWjLIeUbn6zsaz29vTWvMnTs7jWB18oHza6SFPlWALWJ53ZQEcdCbngFileDUGBEMSotzS~xMrUha5F0mceUV0m5ldMIzA2DYgJQejtfDB4QyYvSdsY5XPS9uf6N9ze4uWBHjGpqQW8dARkWAy1sRRdpKdW8tiiL1c2DK6XwjhtvUdf5WKr-ijlqfR4bpJuOJKkpfY3YzI2Ipc9Gwj3tKZ9UoICcDxanGlPbti2CyAAUX0KF3mRVdLiDaROytE1sLRwUhGzgQ__",
-                        scale: 20,
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4LYowCtK3BGmEnyNOC-npOrgagfOT79cN9Q&s",
+                        scale: 8,
                       ),
                     ],
                   ),

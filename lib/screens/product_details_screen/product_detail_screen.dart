@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element, unused_local_variable
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +29,7 @@ String generateRandomGameDescription() {
   return "Bu $genre oyununda, $feature oyun mekanikleri ile $objective amacına ulaşmanız gerekiyor.";
 }
 
-// Rastgele kullanıcı isimleri ve yorumları oluşturmak için yardımcı işlevler
+
 List<String> generateRandomNames(int count) {
   final names = [
     'Ahmet', 'Mehmet', 'Ayşe', 'Fatma', 'Ali', 'Veli', 'Osman', 'Hüseyin', 'Yusuf', 'Zeynep'
@@ -122,9 +124,8 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final isFavorite = ref.watch(favoritesProvider).contains(widget.product);
 
-    // Rastgele rating, yorum sayısı ve yorumlar oluşturma
     final randomRating = generateRandomRating();
-    final commentCount = Random().nextInt(13) + 3; // 3 ile 15 arasında yorum
+    final commentCount = Random().nextInt(13) + 3; 
     final randomNames = generateRandomNames(commentCount);
     final randomComments = generateRandomComments(commentCount, randomRating);
     final starRating = generateStarRating(randomRating);
@@ -187,10 +188,10 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
                         generateRandomGameDescription(),
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 30),
                       Row(
@@ -252,7 +253,6 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      // Rating ve yorum sayısını ekleme
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -291,7 +291,6 @@ class ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      // Yorumları ekleme
                       Column(
                         children: List.generate(commentCount, (index) {
                           return ListTile(

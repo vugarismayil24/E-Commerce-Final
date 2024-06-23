@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -120,9 +120,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 key: _formKey,
                 child: ListView(
                   children: [
-                    Text(
+                    const Text(
                       'Zəhmət olmasa profilinizi tamamlayın',
-                      style: const TextStyle(fontSize: 16.0),
+                      style: TextStyle(fontSize: 16.0),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16.0),

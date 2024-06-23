@@ -53,12 +53,12 @@ class FAQScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
-        side: BorderSide(color: Colors.transparent),
+        side: const BorderSide(color: Colors.transparent),
       ),
       elevation: 0,
       child: ExpansionTile(
         tilePadding: const EdgeInsets.symmetric(horizontal: 16.0),
-        title: Text(question, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(question, style: const TextStyle(fontWeight: FontWeight.bold)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),

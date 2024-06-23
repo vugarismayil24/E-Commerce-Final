@@ -1,6 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:e_com_app/screens/profile_setting_screen/profile_screen.dart';
 import 'package:e_com_app/widgets/bottom_navigation_bar_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import '../../models/product_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../widgets/quantity_control_widget.dart';
 import '../delivery_options_screen/delivery_options_screen.dart';
-import '../home_screen/home_screen.dart';
 
 class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -141,7 +139,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => BottomNavigationBarWidget()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const BottomNavigationBarWidget()));
             },
           ),
           centerTitle: true,
@@ -207,7 +205,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                                 onDecrement: () {}),
                                             const Spacer(),
                                             Text(
-                                              '${product.price * product.quantity} ₼',
+                                              '\$${product.price * product.quantity}',
                                               style: TextStyle(
                                                 fontSize: 18.sp,
                                                 fontWeight: FontWeight.bold,
@@ -310,7 +308,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${totalPrice.toStringAsFixed(2)} ₼',
+                                  "\$${totalPrice.toStringAsFixed(2)}",
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -328,7 +326,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${taxesAndCharges.toStringAsFixed(2)} ₼',
+                                  '\$${taxesAndCharges.toStringAsFixed(2)} ',
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -346,7 +344,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${_discountAmount.toStringAsFixed(2)} ₼',
+                                  '\$${_discountAmount.toStringAsFixed(2)} ',
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -364,7 +362,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${finalTotal.toStringAsFixed(2)} ₼',
+                                  '\$${finalTotal.toStringAsFixed(2)} ',
                                   style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold),
@@ -382,7 +380,7 @@ class CartScreenState extends ConsumerState<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${finalTotal.toStringAsFixed(2)} ₼',
+                            '\$${finalTotal.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 18.sp, fontWeight: FontWeight.bold),
                           ),
